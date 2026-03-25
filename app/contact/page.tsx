@@ -12,9 +12,29 @@ export default function ContactPage() {
           <p className="text-white/60 text-lg mb-10">
             I'm currently looking for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
           </p>
-          <a href="mailto:hello@example.com" className="px-8 py-4 bg-white text-[#0b0416] font-bold rounded-full hover:bg-emerald-400 transition-colors text-lg">
+          <a href="mailto:hello@example.com" className="px-8 py-4 bg-white text-[#0b0416] font-bold rounded-full hover:bg-emerald-400 transition-colors text-lg mb-16">
             Say Hello
           </a>
+
+          <div className="grid sm:grid-cols-3 gap-8 w-full max-w-3xl mt-12 border-t border-white/10 pt-12">
+            <div className="flex flex-col items-center">
+              <span className="text-emerald-400 text-2xl mb-4">📍</span>
+              <h3 className="text-white font-bold mb-2">Location</h3>
+              <p className="text-white/60">New York, NY<br/>United States</p>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <span className="text-emerald-400 text-2xl mb-4">✉️</span>
+              <h3 className="text-white font-bold mb-2">Email</h3>
+              <a href="mailto:hello@example.com" className="text-white/60 hover:text-emerald-400 transition-colors">hello@example.com</a>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <span className="text-emerald-400 text-2xl mb-4">📱</span>
+              <h3 className="text-white font-bold mb-2">Phone</h3>
+              <a href="tel:+1234567890" className="text-white/60 hover:text-emerald-400 transition-colors">+1 (234) 567-890</a>
+            </div>
+          </div>
         </div>
       </section>
     </main>
