@@ -19,15 +19,15 @@ export default function ServicesPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center w-full pt-32 transition-colors duration-300">
-      <section className="w-full py-12 px-6 max-w-6xl mx-auto flex-1 flex flex-col justify-center">
-        <div className="flex items-center gap-4 mb-16">
+      <section className="w-full py-12 px-6 max-w-6xl mx-auto flex-1 flex flex-col justify-center overflow-hidden">
+        <div data-aos="fade-down" className="flex items-center gap-4 mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">My Services</h2>
           <div className="h-px flex-1 bg-linear-to-r from-slate-200 dark:from-white/20 to-transparent" />
         </div>
         
         <div className="grid md:grid-cols-3 gap-8">
           {services.map((service, index) => (
-            <div key={index} className="p-8 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-emerald-500/50 dark:hover:border-emerald-400/30 transition-all group shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-none">
+            <div data-aos="flip-up" data-aos-delay={index * 150} key={index} className="p-8 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-emerald-500/50 dark:hover:border-emerald-400/30 transition-all group shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-none">
               <div className="text-4xl mb-6 bg-emerald-100 dark:bg-emerald-400/10 w-16 h-16 rounded-xl flex items-center justify-center border border-emerald-200 dark:border-emerald-400/20 group-hover:scale-110 transition-transform shadow-inner dark:shadow-none">
                 {service.icon}
               </div>

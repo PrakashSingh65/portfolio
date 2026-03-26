@@ -31,8 +31,8 @@ export default function ResumePage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center w-full pt-32 transition-colors duration-300">
-      <section className="w-full py-12 px-6 max-w-4xl mx-auto flex-1 flex flex-col justify-center">
-        <div className="flex items-center justify-between mb-16">
+      <section className="w-full py-12 px-6 max-w-4xl mx-auto flex-1 flex flex-col justify-center overflow-hidden">
+        <div data-aos="fade-down" className="flex items-center justify-between mb-16">
           <div className="flex items-center gap-4 flex-1">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Resume</h2>
             <div className="h-px w-32 bg-linear-to-r from-slate-200 dark:from-white/20 to-transparent" />
@@ -45,13 +45,13 @@ export default function ResumePage() {
 
         <div className="space-y-16">
           {/* Experience Section */}
-          <div>
+          <div data-aos="fade-right" data-aos-delay="100">
             <h3 className="text-2xl font-bold mb-8 flex items-center gap-3 text-slate-800 dark:text-white">
               <span className="text-emerald-500 dark:text-emerald-400">💼</span> Experience
             </h3>
             <div className="space-y-8 pl-4 border-l-2 border-slate-200 dark:border-white/10">
               {experience.map((exp, index) => (
-                <div key={index} className="relative">
+                <div data-aos="fade-up" data-aos-delay={200 + (index * 150)} key={index} className="relative">
                   <div className="absolute w-3 h-3 bg-emerald-500 dark:bg-emerald-400 rounded-full -left-[23px] top-2" />
                   <div className="mb-1 flex flex-col sm:flex-row sm:items-center justify-between">
                     <h4 className="text-xl font-bold text-slate-900 dark:text-white">{exp.role}</h4>
@@ -65,13 +65,13 @@ export default function ResumePage() {
           </div>
 
           {/* Education Section */}
-          <div>
+          <div data-aos="fade-left" data-aos-delay="200">
             <h3 className="text-2xl font-bold mb-8 flex items-center gap-3 text-slate-800 dark:text-white">
               <span className="text-emerald-500 dark:text-emerald-400">🎓</span> Education
             </h3>
             <div className="space-y-8 pl-4 border-l-2 border-slate-200 dark:border-white/10">
               {education.map((edu, index) => (
-                <div key={index} className="relative">
+                <div data-aos="fade-up" data-aos-delay={300 + (index * 150)} key={index} className="relative">
                   <div className="absolute w-3 h-3 bg-emerald-500 dark:bg-emerald-400 rounded-full -left-[23px] top-2" />
                   <div className="mb-1 flex flex-col sm:flex-row sm:items-center justify-between">
                     <h4 className="text-xl font-bold text-slate-900 dark:text-white">{edu.degree}</h4>

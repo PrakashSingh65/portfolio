@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { ThemeProvider } from "./components/ThemeProvider";
 import ShootingStars from "./components/ShootingStars";
+import { AosInit } from "./components/AosInit";
 
 const preahvihear = Preahvihear({
   variable: "--font-preahvihear",
@@ -28,6 +29,7 @@ export default function RootLayout({
         className={`${preahvihear.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0b0416] dark:text-white transition-colors duration-300 relative z-0`} 
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AosInit />
           <Header />
           <ShootingStars />
           {children}

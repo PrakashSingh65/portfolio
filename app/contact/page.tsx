@@ -24,14 +24,14 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center w-full pt-32">
+    <main className="flex min-h-screen flex-col items-center w-full pt-32 transition-colors duration-300">
       <section
         id="contact"
-        className="w-full py-24 px-6 flex-1 flex flex-col justify-center"
+        className="w-full py-24 px-6 flex-1 flex flex-col justify-center overflow-hidden"
       >
         <div className="max-w-6xl mx-auto w-full">
           {/* Header */}
-          <div className="text-center flex flex-col items-center mb-16">
+          <div data-aos="fade-down" className="text-center flex flex-col items-center mb-16">
             <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-400/10 rounded-full flex items-center justify-center mb-6 border border-emerald-200 dark:border-emerald-400/20 shadow-[0_0_15px_rgba(52,211,153,0.1)]">
               <svg
                 className="w-6 h-6 text-emerald-500 dark:text-emerald-400"
@@ -59,7 +59,7 @@ export default function ContactPage() {
 
           <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Form */}
-            <div className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 p-8 sm:p-10 rounded-3xl backdrop-blur-md shadow-xl dark:shadow-2xl relative overflow-hidden group">
+            <div data-aos="fade-right" data-aos-delay="200" className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 p-8 sm:p-10 rounded-3xl backdrop-blur-md shadow-xl dark:shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-100/50 dark:bg-emerald-400/5 rounded-full blur-3xl -z-10 group-hover:bg-emerald-200/50 dark:group-hover:bg-emerald-400/10 transition-colors duration-500"></div>
               
               <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -153,7 +153,7 @@ export default function ContactPage() {
             </div>
 
             {/* Contact Info */}
-            <div className="flex flex-col gap-10 md:pt-4">
+            <div data-aos="fade-left" data-aos-delay="400" className="flex flex-col gap-10 md:pt-4">
               <div className="flex items-start gap-5 group">
                 <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-400/10 rounded-2xl flex items-center justify-center border border-emerald-200 dark:border-emerald-400/20 shrink-0 group-hover:bg-emerald-200 dark:group-hover:bg-emerald-400/20 group-hover:scale-110 transition-all duration-300">
                   <span className="text-emerald-500 dark:text-emerald-400 text-2xl group-hover:animate-bounce mt-1">📍</span>
