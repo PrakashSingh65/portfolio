@@ -15,7 +15,7 @@ export default function Home() {
             Crafting Digital <br className="hidden md:block" /> Experiences That Matter
           </h1>
           <p data-aos="fade-up" data-aos-delay="300" className="text-lg md:text-xl text-slate-600 dark:text-white/60 mb-10 max-w-2xl">
-            Hi, I'm John Doe. A Full Stack Developer passionate about elevating user experiences through clean code and modern design.
+            Hi, I'm Prakash Singh. A Full Stack Developer passionate about elevating user experiences through clean code and modern design.
           </p>
           <div data-aos="fade-up" data-aos-delay="450" className="flex flex-col sm:flex-row gap-4">
             <a href="/projects" className="px-8 py-3.5 bg-emerald-500 text-white dark:bg-emerald-400 dark:text-[#0b0416] font-semibold rounded-full hover:bg-emerald-600 dark:hover:bg-emerald-300 transition-colors">

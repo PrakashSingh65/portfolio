@@ -161,8 +161,8 @@ export default function ContactPage() {
                 <div>
                   <h3 className="text-slate-800 dark:text-white font-bold text-xl mb-1.5">Our Location</h3>
                   <p className="text-slate-600 dark:text-white/60 leading-relaxed text-lg">
-                    New York, NY <br />
-                    United States
+                    varanasi <br />
+                    Uttar Pradesh
                   </p>
                 </div>
               </div>

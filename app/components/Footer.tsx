@@ -8,7 +8,7 @@ export default function Footer() {
           <a href="#" className="text-slate-400 dark:text-white/40 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors font-medium">Twitter</a>
         </div>
         <p className="text-slate-400 dark:text-white/40 text-sm">
-          © {new Date().getFullYear()} John Doe. All rights reserved.
+          © {new Date().getFullYear()} Prakash Singh All rights reserved.
         </p>
       </div>
     </footer>
