@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${preahvihear.variable} font-sans antialiased bg-slate-50 text-slate-800 dark:bg-[#0b0416] dark:text-white min-h-screen transition-colors duration-300`} 
+        className={`${preahvihear.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0b0416] dark:text-white transition-colors duration-300`} 
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
