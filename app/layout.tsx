@@ -3,6 +3,7 @@ import { Preahvihear } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 const preahvihear = Preahvihear({
   variable: "--font-preahvihear",
@@ -21,13 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${preahvihear.variable} font-sans antialiased bg-[#0b0416] text-white min-h-screen`} 
+        className={`${preahvihear.variable} font-sans antialiased bg-slate-50 text-slate-800 dark:bg-[#0b0416] dark:text-white min-h-screen transition-colors duration-300`} 
       >
-        <Header />
-        {children}
-        <Footer />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Header />
+          {children}
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
