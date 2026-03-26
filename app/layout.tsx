@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { ThemeProvider } from "./components/ThemeProvider";
+import ShootingStars from "./components/ShootingStars";
 
 const preahvihear = Preahvihear({
   variable: "--font-preahvihear",
@@ -24,10 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${preahvihear.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0b0416] dark:text-white transition-colors duration-300`} 
+        className={`${preahvihear.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0b0416] dark:text-white transition-colors duration-300 relative z-0`} 
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
+          <ShootingStars />
           {children}
           <Footer />
         </ThemeProvider>
