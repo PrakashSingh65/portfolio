@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Preahvihear } from "next/font/google";
 import "./globals.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import { ThemeProvider } from "./components/ThemeProvider";
-import ShootingStars from "./components/ShootingStars";
-import { AosInit } from "./components/AosInit";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { ThemeProvider } from "../components/ThemeProvider";
+import ShootingStars from "../components/ShootingStars";
+import { AosInit } from "../components/AosInit";
 
 const preahvihear = Preahvihear({
   variable: "--font-preahvihear",
