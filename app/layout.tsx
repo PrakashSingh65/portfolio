@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { ThemeProvider } from "../components/ThemeProvider";
-import ShootingStars from "../components/ShootingStars";
+import BackgroundFX from "../components/BackgroundFX";
 import { AosInit } from "../components/AosInit";
 
 const preahvihear = Preahvihear({
@@ -31,7 +31,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AosInit />
           <Header />
-          <ShootingStars />
+          <BackgroundFX />
           {children}
           <Footer />
         </ThemeProvider>
