@@ -31,7 +31,7 @@ export default function Login() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full max-w-md relative z-10"
       >
-        <div className="backdrop-blur-2xl bg-white/70 dark:bg-zinc-900/70 border border-zinc-200 dark:border-zinc-800 p-8 sm:p-10 rounded-3xl shadow-2xl">
+        <div className="backdrop-blur-2xl bg-white/70 dark:bg-zinc-900/70 border-2 border-green-500 shadow-green-500/20 p-8 sm:p-10 rounded-3xl shadow-2xl">
           <div className="text-center mb-10">
             <motion.div
               initial={{ scale: 0 }}
@@ -99,18 +99,6 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-zinc-300 text-indigo-500 focus:ring-indigo-500/50 dark:border-zinc-700 dark:bg-zinc-950/50 dark:checked:bg-indigo-500 transition-colors"
-                />
-                <span className="text-zinc-600 dark:text-zinc-400">Remember me</span>
-              </label>
-              <a href="#" className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors font-medium">
-                Forgot password?
-              </a>
-            </div>
 
             <button
               type="submit"
