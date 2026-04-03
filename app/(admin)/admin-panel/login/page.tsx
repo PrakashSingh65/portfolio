@@ -3,20 +3,28 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { User, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Dummy login action for demo
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    const resuslt = await signIn("credentials", {
+      username,
+      password,
+      redirect: false,
+    });
+    if (resuslt?.error) {
+    }
+    if (resuslt?.ok) {
+      router.push("/admin-panel");
+    }
   };
 
   return (
@@ -24,7 +32,7 @@ export default function Login() {
       {/* Background Decor */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-indigo-500/20 rounded-full blur-3xl" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl" />
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -57,7 +65,7 @@ export default function Login() {
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-indigo-500 transition-colors">
                   <User className="w-5 h-5" />
-            </div>
+                </div>
                 <input
                   type="text"
                   value={username}
@@ -98,7 +106,6 @@ export default function Login() {
                 </button>
               </div>
             </div>
-
 
             <button
               type="submit"
