@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Preahvihear } from "next/font/google";
 import "./globals.css";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+
 import { ThemeProvider } from "../components/ThemeProvider";
 import BackgroundFX from "../components/BackgroundFX";
 import { AosInit } from "../components/AosInit";
@@ -26,14 +25,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${preahvihear.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0b0416] dark:text-white transition-colors duration-300 relative z-0`} 
+        className={`${preahvihear.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0b0416] dark:text-white transition-colors duration-300 relative z-0`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AosInit />
-          <Header />
+
           <BackgroundFX />
           {children}
-          <Footer />
         </ThemeProvider>
       </body>
     </html>
