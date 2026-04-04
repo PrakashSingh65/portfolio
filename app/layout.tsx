@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { Preahvihear } from "next/font/google";
+import { Preahvihear, Geist } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "../components/ThemeProvider";
 import BackgroundFX from "../components/BackgroundFX";
 import { AosInit } from "../components/AosInit";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const preahvihear = Preahvihear({
   variable: "--font-preahvihear",
@@ -23,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <body
         className={`${preahvihear.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0b0416] dark:text-white transition-colors duration-300 relative z-0`}
       >
