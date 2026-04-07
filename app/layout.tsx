@@ -6,6 +6,7 @@ import { ThemeProvider } from "../components/ThemeProvider";
 import BackgroundFX from "../components/BackgroundFX";
 import { AosInit } from "../components/AosInit";
 import { cn } from "@/lib/utils";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -34,7 +35,7 @@ export default function RootLayout({
           <AosInit />
 
           <BackgroundFX />
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
