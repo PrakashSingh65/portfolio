@@ -1,30 +1,88 @@
 "use client"
 
-import React, { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import React, { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Code, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SkillFormDialog, { SkillData } from './SkillFormDialog'
 
 export default function SkillManager() {
-  // Mock skills data
-  const [skills, setSkills] = useState<SkillData[]>([
-    { id: '1', skillCategory: 'Frontend', skillName: 'React', priority: 1 },
-    { id: '2', skillCategory: 'Frontend', skillName: 'Next.js', priority: 2 },
-    { id: '3', skillCategory: 'Backend', skillName: 'Node.js', priority: 1 },
-  ]);
+  const [skills, setSkills] = useState<SkillData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAddSkill = (newSkill: SkillData) => {
-    setSkills([...skills, { ...newSkill, id: Date.now().toString() }]);
+  useEffect(() => {
+    fetchSkills();
+  }, []);
+
+  const fetchSkills = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/skill');
+      const data = await res.json();
+      if (res.ok && data.data) {
+        // Map _id from Mongo back to id for the frontend
+        const mappedSkills = data.data.map((item: any) => ({
+          ...item,
+          id: item._id
+        }));
+        setSkills(mappedSkills);
+      }
+    } catch (error) {
+      console.error("Failed to fetch skills:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  const handleEditSkill = (updatedSkill: SkillData) => {
-    setSkills(skills.map(s => (s.id === updatedSkill.id ? updatedSkill : s)));
+  const handleAddSkill = async (newSkill: SkillData) => {
+    try {
+      const res = await fetch('/api/skill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSkill),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSkills([...skills, { ...data.data, id: data.data._id }]);
+      }
+    } catch (error) {
+      console.error("Failed to add skill:", error);
+    }
   }
 
-  const handleDeleteSkill = (id: string) => {
-    setSkills(skills.filter(s => s.id !== id));
+  const handleEditSkill = async (updatedSkill: SkillData) => {
+    if (!updatedSkill.id) return;
+    try {
+      const res = await fetch(`/api/skill/${updatedSkill.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedSkill),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSkills(skills.map(s => (s.id === updatedSkill.id ? { ...data.data, id: data.data._id } : s)));
+      }
+    } catch (error) {
+      console.error("Failed to edit skill:", error);
+    }
+  }
+
+  const handleDeleteSkill = async (id: string) => {
+    try {
+      const res = await fetch(`/api/skill/${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setSkills(skills.filter(s => s.id !== id));
+      }
+    } catch (error) {
+      console.error("Failed to delete skill:", error);
+    }
+  }
+
+  if (loading) {
+    return <div className="p-10 flex justify-center items-center text-muted-foreground">Loading skills...</div>;
   }
 
   return (
@@ -54,7 +112,6 @@ export default function SkillManager() {
                   <CardTitle className="text-lg">{skill.skillName}</CardTitle>
                 </div>
                 <div className="w-10 h-10 rounded-md bg-secondary/50 flex items-center justify-center shrink-0">
-                  {/* Placeholder for Skill Image */}
                   <Code className="w-5 h-5 text-muted-foreground" />
                 </div>
               </CardHeader>
