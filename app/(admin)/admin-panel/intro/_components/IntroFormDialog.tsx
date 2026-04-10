@@ -21,27 +21,36 @@ export interface IntroData {
   description: string;
   titles: string[];
   hasPdf: boolean;
+  imageFile?: File | null;
+  resumeFile?: File | null;
 }
 
 interface IntroFormDialogProps {
   initialData: IntroData;
   onSave: (data: IntroData) => void;
+  isLoading?: boolean;
 }
 
-export default function IntroFormDialog({ initialData, onSave }: IntroFormDialogProps) {
+export default function IntroFormDialog({ initialData, onSave, isLoading }: IntroFormDialogProps) {
   const [open, setOpen] = useState(false);
   
   // Dialog Form State
   const [editUsername, setEditUsername] = useState(initialData.username);
   const [editDescription, setEditDescription] = useState(initialData.description);
   const [editTitles, setEditTitles] = useState<string[]>(initialData.titles);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   // Sync state if initialData changes (or when dialog opens, though simple sync is fine)
   useEffect(() => {
     if (open) {
       setEditUsername(initialData.username);
       setEditDescription(initialData.description);
-      setEditTitles(initialData.titles);
+      
+      // Protect against empty titles array
+      setEditTitles(initialData.titles?.length ? initialData.titles : [""]);
+      setImageFile(null);
+      setResumeFile(null);
     }
   }, [open, initialData]);
 
@@ -58,7 +67,9 @@ export default function IntroFormDialog({ initialData, onSave }: IntroFormDialog
       username: editUsername,
       description: editDescription,
       titles: editTitles.filter(t => t.trim() !== ""),
-      hasPdf: true, // Mocking file logic 
+      hasPdf: initialData.hasPdf || !!resumeFile,
+      imageFile,
+      resumeFile
     });
     setOpen(false);
   }
@@ -102,9 +113,9 @@ export default function IntroFormDialog({ initialData, onSave }: IntroFormDialog
 
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
-              <Label>Titles / Role Details</Label>
+              <Label>Titles / Role / Tech Stack array</Label>
               <Button type="button" variant="outline" size="sm" onClick={addTitleField}>
-                <Plus className="w-4 h-4 mr-1" /> Add Title
+                <Plus className="w-4 h-4 mr-1" /> Add
               </Button>
             </div>
             <div className="space-y-3 mt-2">
@@ -132,18 +143,30 @@ export default function IntroFormDialog({ initialData, onSave }: IntroFormDialog
 
           <div className="grid gap-2">
             <Label htmlFor="profile-image">Profile Image Upload</Label>
-            <Input id="profile-image" type="file" accept="image/*" />
-            <p className="text-xs text-muted-foreground">Recommended size: 500x500px</p>
+            <Input 
+              id="profile-image" 
+              type="file" 
+              accept="image/*" 
+              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+            />
+            <p className="text-xs text-muted-foreground">Select a new image to update the existing one.</p>
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="resume-pdf">Resume / CV (PDF Upload)</Label>
-            <Input id="resume-pdf" type="file" accept="application/pdf" />
-            <p className="text-xs text-muted-foreground">Please upload a valid PDF file.</p>
+            <Input 
+              id="resume-pdf" 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+            />
+            <p className="text-xs text-muted-foreground">Select a new PDF file to update the existing one.</p>
           </div>
         </div>
         <DialogFooter>
-          <Button type="button" onClick={handleSave}>Save changes</Button>
+          <Button type="button" onClick={handleSave} disabled={isLoading}>
+            {isLoading ? "Saving..." : "Save changes"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
