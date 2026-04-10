@@ -29,3 +29,28 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         return NextResponse.json({ error: "Failed to delete about section" }, { status: 500 });       
     }
 }
+
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        await ConnectDB();
+        const { id } = await Promise.resolve(params);
+        const { description } = await req.json();
+
+        if (!description) {
+            return NextResponse.json({ error: "Description is required" }, { status: 400 });
+        }
+
+        const updatedAbout = await About.findByIdAndUpdate(id, { description }, { new: true });
+
+        if (!updatedAbout) {
+            return NextResponse.json({ error: "About section not found" }, { status: 404 });
+        }
+
+        revalidatePath("/admin-panel/about");
+        revalidatePath("/");
+        
+        return NextResponse.json({ data: updatedAbout }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to update about section" }, { status: 500 });
+    }
+}

@@ -4,6 +4,16 @@ import { revalidatePath } from "next/cache";
 import { ConnectDB } from "@/lib/db";
 import About from "@/models/about.model";
 
+export async function GET() {
+    try {
+        await ConnectDB();
+        const about = await About.findOne({});
+        return NextResponse.json({ data: about }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to fetch about section" }, { status: 500 });
+    }
+}
+
 export async function POST(req: NextRequest) {
     try {
         await ConnectDB()
@@ -14,13 +24,13 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "About section already exists" }, { status: 400 });
         }
 
-       const { desc } = await req.json();
+       const { description } = await req.json();
 
-        if (!desc) {
+        if (!description) {
             return NextResponse.json({ error: "Description is required" }, { status: 400 });
         }
 
-        const newAbout = await About.create({ desc });
+        const newAbout = await About.create({ description });
 
         revalidatePath("/admin-panel/about");
         revalidatePath("/");
