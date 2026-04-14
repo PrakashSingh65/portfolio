@@ -39,8 +39,13 @@ export default function Login() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full max-w-md relative z-10"
       >
-        <div className="backdrop-blur-2xl bg-white/70 dark:bg-zinc-900/70 border-2 border-green-500 shadow-green-500/20 p-8 sm:p-10 rounded-3xl shadow-2xl">
-          <div className="text-center mb-10">
+        <div className="relative p-[2px] rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/10">
+          {/* Animated Glowing Border Lines */}
+          <div className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0_340deg,#8b5cf6_360deg)] animate-[spin_3s_linear_infinite]" />
+          <div className="absolute inset-[-100%] bg-[conic-gradient(from_180deg,transparent_0_340deg,#6366f1_360deg)] animate-[spin_3s_linear_infinite]" />
+          
+          <div className="relative backdrop-blur-2xl bg-white/80 dark:bg-zinc-900/80 p-8 sm:p-10 rounded-[22px] h-full w-full border border-white/40 dark:border-white/5">
+            <div className="text-center mb-10">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
