@@ -1,0 +1,144 @@
+import { ConnectDB } from "@/lib/db";
+import Project from "@/models/project.model";
+import { NextRequest, NextResponse } from "next/server";
+import { v2 as cloudinary } from "cloudinary";
+import { revalidatePath } from "next/cache";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+  api_key: process.env.CLOUDINARY_API_KEY!,
+  api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
+
+async function uploadToCloudinary(
+  file: File,
+  type: "image" | "auto",
+): Promise<[string, string]> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(
+        { resource_type: type, folder: "portfolio/project" },
+        (err, result) => {
+          if (err || !result?.secure_url)
+            return reject("Cloudinary upload failed");
+          resolve([result.secure_url, result.public_id]);
+        },
+      )
+      .end(buffer);
+  });
+}
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    await ConnectDB();
+    
+    const existingProject = await Project.findById(id);
+    if (!existingProject) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    const formData = await req.formData();
+    const projectName = formData.get("projectName") as string;
+    const projectDesc = formData.get("projectDesc") as string;
+    const projectSubDesc = formData.get("projectSubDesc") as string || "";
+    const projectTechStack = formData.get("projectTechStack") as string;
+    const githubLink = formData.get("githubLink") as string;
+    const liveLink = formData.get("liveLink") as string;
+    const priority = formData.get("priority") as string;
+    const projectImage = formData.get("projectImage") as File | null;
+
+    if (!projectName || !projectDesc || !projectTechStack || !githubLink || !liveLink) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
+    }
+
+    let imageUrl = existingProject.projectImage;
+    let imagePublicId = existingProject.projectImagePublicId;
+
+    if (projectImage && typeof projectImage === 'object') {
+      if (projectImage.size > 5 * 1024 * 1024) {
+        return NextResponse.json({ error: "Image size exceeds 5MB" }, { status: 400 });
+      }
+      
+      const [url, pubId] = await uploadToCloudinary(projectImage, "image");
+      
+      if (imagePublicId) {
+          try {
+            await cloudinary.uploader.destroy(imagePublicId);
+          } catch(e) {
+            console.log("Failed to delete old image from Cloudinary");
+          }
+      }
+      
+      imageUrl = url;
+      imagePublicId = pubId;
+    }
+
+    existingProject.projectName = projectName;
+    existingProject.projectDesc = projectDesc;
+    existingProject.projectSubDesc = projectSubDesc;
+    existingProject.projectImage = imageUrl;
+    existingProject.projectImagePublicId = imagePublicId;
+    existingProject.projectTechStack = projectTechStack.split(",").map((t) => t.trim()).filter((t: string) => t);
+    existingProject.githubLink = githubLink;
+    existingProject.liveLink = liveLink;
+    if (priority) {
+      existingProject.priority = parseInt(priority);
+    }
+
+    await existingProject.save();
+
+    revalidatePath("/admin-panel/projects");
+    revalidatePath("/");
+    
+    return NextResponse.json({ data: existingProject }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to update project" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    await ConnectDB();
+    
+    const existingProject = await Project.findById(id);
+    if (!existingProject) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    if (existingProject.projectImagePublicId) {
+      try {
+        await cloudinary.uploader.destroy(existingProject.projectImagePublicId);
+      } catch(e) {
+        console.log("Failed to delete image from Cloudinary");
+      }
+    }
+
+    await Project.findByIdAndDelete(id);
+
+    revalidatePath("/admin-panel/projects");
+    revalidatePath("/");
+    
+    return NextResponse.json({ message: "Project deleted successfully" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete project" },
+      { status: 500 },
+    );
+  }
+}
