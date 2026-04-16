@@ -23,7 +23,7 @@ export default function Login() {
     if (resuslt?.error) {
     }
     if (resuslt?.ok) {
-      router.push("/admin-panel");
+      router.push("/admin-panel/intro");
     }
   };
 
