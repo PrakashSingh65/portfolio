@@ -130,6 +130,7 @@ export default function Login() {
             </button>
           </form>
         </div>
+        </div>
       </motion.div>
     </div>
   );
