@@ -1,9 +1,10 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { FileText, UserCircle } from 'lucide-react'
+import { FileText, UserCircle, Trash2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import IntroFormDialog, { IntroData } from './IntroFormDialog'
 
 export default function IntroCard() {
@@ -14,9 +15,11 @@ export default function IntroCard() {
     hasPdf: false,
   });
   
+  const [introId, setIntroId] = useState<string | null>(null);
   const [hasIntro, setHasIntro] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,15 +34,17 @@ export default function IntroCard() {
       
       if (res.ok && result?.data) {
         setHasIntro(true);
+        setIntroId(result.data._id);
         setIntroData({
           username: result.data.name,
-          description: result.data.description, // Mapped properly to db schema
+          description: result.data.description,
           titles: result.data.techStack,
           hasPdf: !!result.data.file,
         });
         setImageUrl(result.data.image);
       } else {
         setHasIntro(false);
+        setIntroId(null);
       }
     } catch (error) {
       console.error("Error fetching intro data:", error);
@@ -53,7 +58,7 @@ export default function IntroCard() {
       setSaving(true);
       const formData = new FormData();
       formData.append("name", newData.username || "Your Name");
-      formData.append("desc", newData.description || "Your creative description goes here.");
+      formData.append("description", newData.description || "Your creative description goes here.");
       
       const safeTechStack = newData.titles.length > 0 ? newData.titles.join(",") : "Developer";
       formData.append("techStack", safeTechStack);
@@ -65,8 +70,12 @@ export default function IntroCard() {
         formData.append("file", newData.resumeFile);
       }
 
-      const method = hasIntro ? 'PUT' : 'POST';
-      const response = await fetch('/api/intro', {
+      // Use dynamic route with ID for updates, base route for creation
+      const isUpdate = hasIntro && introId;
+      const url = isUpdate ? `/api/intro/${introId}` : '/api/intro';
+      const method = isUpdate ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
         method,
         body: formData,
       });
@@ -75,6 +84,7 @@ export default function IntroCard() {
 
       if (response.ok && result.data) {
         setHasIntro(true);
+        setIntroId(result.data._id);
         setIntroData({
           username: result.data.name,
           description: result.data.description,
@@ -93,13 +103,62 @@ export default function IntroCard() {
     }
   }
 
+  const handleDelete = async () => {
+    if (!introId) return;
+    
+    const confirmed = confirm("Are you sure you want to delete the intro data? This action cannot be undone.");
+    if (!confirmed) return;
+
+    try {
+      setDeleting(true);
+      const response = await fetch(`/api/intro/${introId}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setHasIntro(false);
+        setIntroId(null);
+        setIntroData({
+          username: "",
+          description: "",
+          titles: [],
+          hasPdf: false,
+        });
+        setImageUrl(null);
+      } else {
+        console.error("Error deleting intro:", result.error);
+        alert(`Failed to delete: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Error deleting intro data:", error);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   if (loading) {
     return <div className="p-10 flex justify-center items-center text-muted-foreground">Loading intro data...</div>;
   }
 
   return (
     <Card className="relative overflow-hidden border shadow-sm">
-      <IntroFormDialog initialData={introData} onSave={handleSave} isLoading={saving} />
+      <div className="absolute top-4 right-4 flex gap-2">
+        {hasIntro && introId && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleDelete}
+            disabled={deleting}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            {deleting ? "Deleting..." : "Delete"}
+          </Button>
+        )}
+        <IntroFormDialog initialData={introData} onSave={handleSave} isLoading={saving} />
+      </div>
 
       <CardHeader className="flex flex-col sm:flex-row items-center gap-6 pb-6 mt-4">
         <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center shrink-0 border-2 border-primary/10 overflow-hidden">

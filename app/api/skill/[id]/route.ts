@@ -3,10 +3,10 @@ import { revalidatePath } from "next/cache";
 import { ConnectDB } from "@/lib/db";
 import Skill from "@/models/skill.model";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         await ConnectDB();
-        const { id } = await Promise.resolve(params);
+        const { id } = await params;
         const body = await req.json();
 
         const updatedSkill = await Skill.findByIdAndUpdate(id, body, { new: true });
@@ -24,10 +24,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         await ConnectDB();
-        const { id } = await Promise.resolve(params);
+        const { id } = await params;
 
         const skill = await Skill.findById(id);
         if (!skill) {

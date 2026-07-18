@@ -4,11 +4,11 @@ import { revalidatePath } from "next/cache";
 import { ConnectDB } from "@/lib/db";
 import About from "@/models/about.model";
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string }}) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         await ConnectDB()
 
-        const { id } = params;
+        const { id } = await params;
 
         const existAbout = await About.findById(id)
 
@@ -30,10 +30,10 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         await ConnectDB();
-        const { id } = await Promise.resolve(params);
+        const { id } = await params;
         const { description } = await req.json();
 
         if (!description) {
