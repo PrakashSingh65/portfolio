@@ -1,7 +1,17 @@
-export default function AboutPage() {
-  const skills = [
-    "JavaScript", "TypeScript", "React", "Next.js", "Tailwind CSS", "Node.js", "GraphQL", "PostgreSQL"
-  ];
+import { getAboutData, getSkillsData } from "@/lib/data";
+
+export const dynamic = "force-dynamic";
+
+const defaultSkills = [
+  "JavaScript", "TypeScript", "React", "Next.js", "Tailwind CSS", "Node.js", "GraphQL", "PostgreSQL"
+];
+
+export default async function AboutPage() {
+  const aboutDoc = await getAboutData();
+  const fetchedSkills = await getSkillsData();
+
+  const description = aboutDoc?.description;
+  const skills = fetchedSkills.length > 0 ? fetchedSkills.map((s: any) => s.skillName) : defaultSkills;
 
   return (
     <main className="flex min-h-screen flex-col items-center w-full pt-32 transition-colors duration-300">
@@ -14,12 +24,20 @@ export default function AboutPage() {
           </div>
           <div className="grid md:grid-cols-2 gap-12">
             <div data-aos="fade-right" data-aos-delay="200">
-              <p className="text-slate-700 dark:text-white/70 leading-relaxed mb-6 text-lg">
-                I specialize in building scalable web applications with a focus on performance and beautiful interfaces. With a strong foundation in modern JavaScript frameworks, I enjoy bridging the gap between design and engineering.
-              </p>
-              <p className="text-slate-700 dark:text-white/70 leading-relaxed text-lg">
-                When I'm not coding, you can find me exploring new technologies, contributing to open-source, or enjoying a good cup of coffee.
-              </p>
+              {description ? (
+                <p className="text-slate-700 dark:text-white/70 leading-relaxed mb-6 text-lg whitespace-pre-wrap">
+                  {description}
+                </p>
+              ) : (
+                <>
+                  <p className="text-slate-700 dark:text-white/70 leading-relaxed mb-6 text-lg">
+                    I specialize in building scalable web applications with a focus on performance and beautiful interfaces. With a strong foundation in modern JavaScript frameworks, I enjoy bridging the gap between design and engineering.
+                  </p>
+                  <p className="text-slate-700 dark:text-white/70 leading-relaxed text-lg">
+                    When I'm not coding, you can find me exploring new technologies, contributing to open-source, or enjoying a good cup of coffee.
+                  </p>
+                </>
+              )}
             </div>
             <div data-aos="fade-left" data-aos-delay="400">
               <h3 className="text-xl font-semibold mb-6 flex items-center gap-2 text-slate-800 dark:text-white">

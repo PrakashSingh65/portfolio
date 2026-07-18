@@ -1,33 +1,40 @@
-export default function ResumePage() {
-  const experience = [
-    {
-      role: "Senior Full Stack Developer",
-      company: "Tech Solutions Inc.",
-      duration: "2021 - Present",
-      description: "Led the development of scalable web applications using Next.js and Node.js. Architected cloud-native solutions, improving performance by 40%."
-    },
-    {
-      role: "Frontend Engineer",
-      company: "Creative Digital Agency",
-      duration: "2019 - 2021",
-      description: "Developed interactive UIs using React and Tailwind CSS. Collaborated with designers to implement pixel-perfect, responsive web designs."
-    },
-    {
-      role: "Web Developer Intern",
-      company: "Startup Hub",
-      duration: "2018 - 2019",
-      description: "Assisted in building internal tools and dashboards. Gained hands-on experience with RESTful APIs and modern JavaScript frameworks."
-    }
-  ];
+import { getIntroData } from "@/lib/data";
 
-  const education = [
-    {
-      degree: "B.S. in Computer Science",
-      university: "State University",
-      duration: "2014 - 2018",
-      description: "Focus on software engineering, data structures, and algorithms. Graduated with Honors."
-    }
-  ];
+export const dynamic = "force-dynamic";
+
+const experience = [
+  {
+    role: "Senior Full Stack Developer",
+    company: "Tech Solutions Inc.",
+    duration: "2021 - Present",
+    description: "Led the development of scalable web applications using Next.js and Node.js. Architected cloud-native solutions, improving performance by 40%."
+  },
+  {
+    role: "Frontend Engineer",
+    company: "Creative Digital Agency",
+    duration: "2019 - 2021",
+    description: "Developed interactive UIs using React and Tailwind CSS. Collaborated with designers to implement pixel-perfect, responsive web designs."
+  },
+  {
+    role: "Web Developer Intern",
+    company: "Startup Hub",
+    duration: "2018 - 2019",
+    description: "Assisted in building internal tools and dashboards. Gained hands-on experience with RESTful APIs and modern JavaScript frameworks."
+  }
+];
+
+const education = [
+  {
+    degree: "B.S. in Computer Science",
+    university: "State University",
+    duration: "2014 - 2018",
+    description: "Focus on software engineering, data structures, and algorithms. Graduated with Honors."
+  }
+];
+
+export default async function ResumePage() {
+  const introDoc = await getIntroData();
+  const resumeUrl = introDoc?.file || "#";
 
   return (
     <main className="flex min-h-screen flex-col items-center w-full pt-32 transition-colors duration-300">
@@ -37,10 +44,26 @@ export default function ResumePage() {
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Resume</h2>
             <div className="h-px w-32 bg-linear-to-r from-slate-200 dark:from-white/20 to-transparent" />
           </div>
-          <a href="#" className="px-6 py-3 bg-emerald-100 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 font-semibold rounded-full hover:bg-emerald-200 dark:hover:bg-emerald-400/20 transition-colors border border-emerald-200 dark:border-emerald-400/20 flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            Download PDF
-          </a>
+          {resumeUrl !== "#" ? (
+            <a
+              href={resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-emerald-100 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 font-semibold rounded-full hover:bg-emerald-200 dark:hover:bg-emerald-400/20 transition-colors border border-emerald-200 dark:border-emerald-400/20 flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download PDF
+            </a>
+          ) : (
+            <span className="px-6 py-3 bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-white/30 font-semibold rounded-full border border-slate-200 dark:border-white/10 flex items-center gap-2 cursor-not-allowed">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Resume PDF Unavailable
+            </span>
+          )}
         </div>
 
         <div className="space-y-16">

@@ -1,23 +1,35 @@
 import ProjectCard from "../../../components/ProjectCard";
+import { getProjectsData } from "@/lib/data";
 
-export default function ProjectsPage() {
-  const projects = [
-    {
-      title: "Neon E-Commerce",
-      description: "A high-performance modern e-commerce platform with Next.js and Stripe integration. Features a stunning dark mode design.",
-      tags: ["Next.js", "Tailwind", "Stripe"]
-    },
-    {
-      title: "AI Chat Interface",
-      description: "A sleek, responsive chat application utilizing OpenAI's API. Designed with a focus on typography and micro-interactions.",
-      tags: ["React", "OpenAI", "Framer Motion"]
-    },
-    {
-      title: "FinTech Dashboard",
-      description: "An analytics dashboard for tracking personal finance with beautiful charts and real-time data sync.",
-      tags: ["TypeScript", "Next.js", "Recharts"]
-    }
-  ];
+export const dynamic = "force-dynamic";
+
+const defaultProjects = [
+  {
+    projectName: "Neon E-Commerce",
+    projectDesc: "A high-performance modern e-commerce platform with Next.js and Stripe integration. Features a stunning dark mode design.",
+    projectTechStack: ["Next.js", "Tailwind", "Stripe"],
+    githubLink: "#",
+    liveLink: "#",
+  },
+  {
+    projectName: "AI Chat Interface",
+    projectDesc: "A sleek, responsive chat application utilizing OpenAI's API. Designed with a focus on typography and micro-interactions.",
+    projectTechStack: ["React", "OpenAI", "Framer Motion"],
+    githubLink: "#",
+    liveLink: "#",
+  },
+  {
+    projectName: "FinTech Dashboard",
+    projectDesc: "An analytics dashboard for tracking personal finance with beautiful charts and real-time data sync.",
+    projectTechStack: ["TypeScript", "Next.js", "Recharts"],
+    githubLink: "#",
+    liveLink: "#",
+  },
+];
+
+export default async function ProjectsPage() {
+  const dbProjects = await getProjectsData();
+  const projects = dbProjects.length > 0 ? dbProjects : defaultProjects;
 
   return (
     <main className="flex min-h-screen flex-col items-center w-full pt-32 transition-colors duration-300">
@@ -28,7 +40,7 @@ export default function ProjectsPage() {
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project, index) => (
-            <div data-aos="fade-up" data-aos-delay={index * 200} key={index} className="h-full">
+            <div data-aos="fade-up" data-aos-delay={index * 200} key={project._id || index} className="h-full">
               <ProjectCard {...project} />
             </div>
           ))}
