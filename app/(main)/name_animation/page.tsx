@@ -18,8 +18,14 @@ export default function NameAnimation() {
                 </motion.h1>
 
                 <motion.p
-                initial={{}}
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.8, delay: 0.3, ease: "easeOut"}}
+                className="text-xl text-gray-400"
+                >
+                    specialized in
+                </motion.p>
 
         </div>
-    )
+    );
 }
