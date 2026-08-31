@@ -4,92 +4,62 @@ import React from 'react';
 
 const certificatesData = [
   {
-    id: 1,
     title: "Full Stack Web Development",
-    issuer: "Udemy / Coursera",
-    date: "2024",
-    credentialId: "CERT-849201",
-    link: "#",
-    skills: ["React", "Node.js", "MongoDB"],
-  },
-  {
-    id: 2,
-    title: "React & Next.js Professional Certification",
-    issuer: "Meta / HackerRank",
+    issuer: "Udemy",
     date: "2025",
-    credentialId: "CERT-392014",
-    link: "#",
-    skills: ["Next.js", "TypeScript", "Tailwind CSS"],
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop",
   },
   {
-    id: 3,
-    title: "Claude AI & Vibe Coding Workshop",
-    issuer: "AI Certificate",
+    title: "React & Next.js Advanced Certificate",
+    issuer: "Coursera",
+    date: "2025",
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=600&auto=format&fit=crop",
+  },
+  {
+    title: "Node.js & Backend Architecture",
+    issuer: "HackerRank",
     date: "2026",
-    credentialId: "CERT-104928",
-    link: "#",
-    skills: ["AI Agents", "MCP", "Vibe Coding"],
+    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=600&auto=format&fit=crop",
   },
 ];
 
 export default function CertificatePage() {
   return (
-    <section className="min-h-screen bg-background text-foreground px-6 py-12 max-w-5xl mx-auto font-sans transition-colors duration-200">
-      <div className="mb-10">
-        <span className="text-muted-foreground text-sm tracking-wider uppercase font-medium">
-          Featured
+    <section className="py-8 bg-transparent text-zinc-900 dark:text-white max-w-5xl mx-auto px-4">
+      <div className="mb-6">
+        <span className="text-zinc-500 dark:text-gray-400 text-xs uppercase tracking-wider font-semibold">
+          FEATURED
         </span>
-        <h1 className="text-4xl font-extrabold text-foreground mt-1">
-          Certificates
-        </h1>
+        <h2 className="text-3xl font-bold mt-1">Certificates</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {certificatesData.map((cert) => (
-          <div
-            key={cert.id}
-            className="flex flex-col justify-between p-5 bg-card border border-border rounded-xl hover:border-primary/50 hover:bg-accent/30 transition-all duration-200 group shadow-sm"
+        {certificatesData.map((cert, index) => (
+          <div 
+            key={index} 
+            className="p-3 bg-zinc-100/90 dark:bg-zinc-900/90 border border-zinc-300 dark:border-zinc-800 rounded-2xl hover:border-zinc-400 dark:hover:border-zinc-700 transition-all shadow-sm group cursor-pointer"
           >
-            <div>
-              <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center text-primary font-bold text-lg mb-4 group-hover:scale-105 transition-transform">
-                
-              </div>
-
-              <h2 className="text-lg font-bold text-card-foreground group-hover:text-primary transition-colors duration-200 mb-1 leading-snug">
-                {cert.title}
-              </h2>
-
-              <p className="text-xs text-muted-foreground mb-3">
-                {cert.issuer} • <span className="font-medium text-foreground">{cert.date}</span>
-              </p>
-
-              <div className="flex gap-1.5 flex-wrap mb-4">
-                {cert.skills.map((skill, idx) => (
-                  <span
-                    key={idx}
-                    className="text-[11px] bg-muted text-muted-foreground px-2 py-0.5 rounded-md font-medium"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
+            <div className="overflow-hidden rounded-xl mb-3 aspect-[16/10] bg-zinc-200 dark:bg-zinc-800">
+              <img 
+                src={cert.image} 
+                alt={cert.title} 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
             </div>
-
-            <div className="pt-3 border-t border-border/50 flex items-center justify-between mt-auto">
-              <span className="text-[11px] text-muted-foreground font-mono">
-                ID: {cert.credentialId}
-              </span>
-              <a
-                href={cert.link}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
-              >
-                Verify ↗
-              </a>
-            </div>
+            <h3 className="text-base font-semibold text-zinc-800 dark:text-gray-100 group-hover:text-black dark:group-hover:text-white line-clamp-1">
+              {cert.title}
+            </h3>
+            <p className="text-xs text-zinc-500 dark:text-gray-400 mt-1">
+              {cert.issuer} • {cert.date}
+            </p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-8 text-center">
+        <button className="px-5 py-2.5 bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-sm font-medium hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-zinc-800 dark:text-gray-200">
+          Show all Certificates →
+        </button>
       </div>
     </section>
   );
