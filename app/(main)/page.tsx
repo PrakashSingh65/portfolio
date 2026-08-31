@@ -5,6 +5,7 @@ import ProjectsPage from './projects/page'
 import ContactPage from './contact/page'
 import SkillPage from './skill/page'
 import BlogPage from './blog/page'
+import CertificatePage from './certificate/page'
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <AboutPage/>
       <SkillPage/>
       <ProjectsPage/>
+      <CertificatePage/>
       <BlogPage/>
       <ContactPage/>
       
