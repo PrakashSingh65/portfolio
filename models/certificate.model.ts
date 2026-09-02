@@ -5,6 +5,10 @@ export interface ICertificate {
   priority: number;
   imageUrl: string;
   imageUrlPublicId: string;
+  image?: string;
+  title?: string;
+  issuer?: string;
+  date?: string;
 }
 
 const certificateSchema = new Schema<ICertificate>(
@@ -19,6 +23,22 @@ const certificateSchema = new Schema<ICertificate>(
     },
 
     imageUrlPublicId: {
+      type: String,
+    },
+
+    image: {
+      type: String,
+    },
+
+    title: {
+      type: String,
+    },
+
+    issuer: {
+      type: String,
+    },
+
+    date: {
       type: String,
     },
   },
