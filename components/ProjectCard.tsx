@@ -1,6 +1,9 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 interface ProjectCardProps {
+  _id: string;
   projectName: string;
   projectDesc: string;
   projectSubDesc?: string;
@@ -18,6 +21,7 @@ export default function ProjectCard({
   projectTechStack,
   githubLink,
   liveLink,
+  _id
 }: ProjectCardProps) {
   return (
     <div className="group relative rounded-3xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 overflow-hidden hover:border-emerald-500/40 hover:bg-slate-50 dark:hover:border-emerald-400/40 dark:hover:bg-white/[0.04] transition-all duration-500 shadow-sm hover:shadow-md dark:shadow-none dark:hover:shadow-none flex flex-col h-full">
@@ -61,6 +65,17 @@ export default function ProjectCard({
             </span>
           ))}
         </div>
+        <Link
+              href={`/projects/${_id}`}
+              className="
+                flex items-center gap-1 
+                text-sm font-medium text-zinc-600 dark:text-zinc-400 
+                hover:text-zinc-900 dark:hover:text-white transition-colors
+              "
+            >
+              View Details
+              <ArrowRight size={16} />
+            </Link>
         <div className="flex gap-4 mt-auto border-t border-slate-100 dark:border-white/5 pt-4">
           {githubLink && (
             <a
