@@ -43,12 +43,13 @@ export default async function CertificatePage() {
         <p className="text-sm dark:text-gray-400 text-gray-700">Featured</p>
         <h2 className="md:text-xl text-xl font-bold">Certificates</h2>
       </div>
+      
       <CertificateGallery certificates={certificates} limit={3} />
 
-      <div className="text-center mt-10">
+      <div className="flex justify-center w-full mt-12 mb-6">
         <Link href="/certificate/all-certificate">
-          <Button variant="outline" className=" hover:bg-white cursor-pointer ">
-            Show all Certificates <MoveRight />
+          <Button variant="outline" className="hover:bg-white cursor-pointer">
+            Show all Certificates <MoveRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>
       </div>

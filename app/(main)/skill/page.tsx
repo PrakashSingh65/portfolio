@@ -1,16 +1,9 @@
 import React from "react";
 import { ConnectDB } from "../../../lib/db";
 import Skill, { ISkill } from "../../../models/skill.model";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { Link } from "lucide-react";
 
 const SkillGrid = dynamic(() => import("@/components/SkillGrid"), {
   loading: () => (
@@ -36,13 +29,13 @@ export default async function SkillPage() {
 
   return (
     <TooltipProvider>
-      <div className="">
-        <div className="flex flex-col mb-2">
+      <section className="max-w-5xl mx-auto px-4 lg:px-8 py-10">
+        <div className="flex flex-col mb-4">
           <p className="text-sm dark:text-gray-400 text-gray-700">Featured</p>
           <h2 className="md:text-xl text-xl font-bold">Skills</h2>
         </div>
         <SkillGrid skills={skills} />
-      </div>
+      </section>
     </TooltipProvider>
   );
 }
