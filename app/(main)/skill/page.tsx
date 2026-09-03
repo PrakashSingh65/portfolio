@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/tooltip";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Link } from "lucide-react";
 
 const SkillGrid = dynamic(() => import("@/components/SkillGrid"), {
   loading: () => (

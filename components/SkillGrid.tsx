@@ -72,7 +72,7 @@ export default function SkillGrid({ skills }: { skills: ISkill[] }) {
                   {/* Skill Icon */}
                   <div className="relative w-8 h-8 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg group-hover:scale-110 transition-transform duration-300">
                     <Image
-                      src={skill.skillImage}
+                      src={skill.image}
                       alt={skill.skillName}
                       fill
                       className="object-contain p-1"

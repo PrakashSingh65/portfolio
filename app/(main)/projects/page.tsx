@@ -1,5 +1,8 @@
 import ProjectCard from "../../../components/ProjectCard";
 import { getProjectsData } from "@/lib/data";
+import { MoveRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +47,13 @@ export default async function ProjectsPage() {
               <ProjectCard {...project} />
             </div>
           ))}
+          <div className="text-center mt-10">
+        <Link href="/projects/all-projects">
+          <Button variant="outline" className=" hover:bg-white cursor-pointer ">
+            Show all projects <MoveRight />
+          </Button>
+        </Link>
+      </div>
         </div>
       </section>
     </main>
