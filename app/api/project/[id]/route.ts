@@ -3,6 +3,7 @@ import Project from "@/models/project.model";
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
+import { formatExternalUrl } from "@/lib/utils";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -44,12 +45,12 @@ export async function PUT(
     }
 
     const formData = await req.formData();
-    const projectName = formData.get("projectName") as string;
-    const projectDesc = formData.get("projectDesc") as string;
-    const projectSubDesc = formData.get("projectSubDesc") as string || "";
+    const projectName = (formData.get("projectName") as string)?.trim();
+    const projectDesc = (formData.get("projectDesc") as string)?.trim();
+    const projectSubDesc = (formData.get("projectSubDesc") as string)?.trim() || "";
     const projectTechStack = formData.get("projectTechStack") as string;
-    const githubLink = formData.get("githubLink") as string;
-    const liveLink = formData.get("liveLink") as string;
+    const githubLink = formatExternalUrl(formData.get("githubLink") as string);
+    const liveLink = formatExternalUrl(formData.get("liveLink") as string);
     const priority = formData.get("priority") as string;
     const projectImage = formData.get("projectImage") as File | null;
 
@@ -97,6 +98,7 @@ export async function PUT(
     await existingProject.save();
 
     revalidatePath("/admin-panel/projects");
+    revalidatePath("/projects");
     revalidatePath("/");
     
     return NextResponse.json({ data: existingProject }, { status: 200 });
@@ -132,6 +134,7 @@ export async function DELETE(
     await Project.findByIdAndDelete(id);
 
     revalidatePath("/admin-panel/projects");
+    revalidatePath("/projects");
     revalidatePath("/");
     
     return NextResponse.json({ message: "Project deleted successfully" }, { status: 200 });

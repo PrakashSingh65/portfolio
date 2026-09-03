@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label'
 import { Plus, Edit, Loader2 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { Project } from './ProjectList'
+import { formatExternalUrl } from '@/lib/utils'
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 
@@ -73,12 +74,12 @@ export default function ProjectFormDialog({ projectToEdit, onSuccess }: ProjectF
     try {
       setSaving(true);
       const formData = new FormData();
-      formData.append("projectName", projectName);
-      formData.append("projectSubDesc", projectSubDesc);
+      formData.append("projectName", projectName.trim());
+      formData.append("projectSubDesc", projectSubDesc.trim());
       formData.append("projectDesc", projectDesc);
       formData.append("projectTechStack", projectTechStack);
-      formData.append("githubLink", githubLink);
-      formData.append("liveLink", liveLink);
+      formData.append("githubLink", formatExternalUrl(githubLink));
+      formData.append("liveLink", formatExternalUrl(liveLink));
       formData.append("priority", priority);
       
       if (projectImage) {
