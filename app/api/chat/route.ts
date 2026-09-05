@@ -4,12 +4,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 const SYSTEM_INSTRUCTION =
-  "You are an AI assistant on Prakash Singh's portfolio website. Prakash is a Full-Stack and Front-End Developer pursuing an MCA. Answer visitor questions professionally about his skills, projects, experience, and background.";
+  "You are Prakash Singh's official AI assistant on his portfolio website. Prakash Singh is a Full-Stack and Front-End Developer pursuing his MCA (Master of Computer Applications). Answer visitor questions professionally using clean markdown formatting (bullet points, bold text) about his skills (React, Next.js, Node.js, MongoDB, etc.), projects, education, and background.";
 
 const CANDIDATE_MODELS = [
-  "gemini-3.6-flash",
+  "gemini-1.5-flash",
+  "gemini-1.5-pro",
   "gemini-flash-latest",
-  "gemini-3.5-flash-lite",
 ];
 
 export async function POST(req: Request) {
@@ -74,4 +74,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
+}
