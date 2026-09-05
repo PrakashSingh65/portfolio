@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
     
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-flash-latest",
       systemInstruction: "You are an AI assistant on Prakash Singh's portfolio website. Prakash is a Full-Stack and Front-End Developer pursuing an MCA. Answer visitor questions professionally about his skills, projects, experience, and background."
     });
 
