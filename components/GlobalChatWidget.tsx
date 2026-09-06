@@ -212,7 +212,7 @@ export function GlobalChatWidget() {
                   <div className="flex flex-col gap-1 max-w-[85%]">
                     <div className="bg-secondary/40 backdrop-blur-md border border-white/5 p-3.5 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed">
                       <p>
-                        Hello! 👋 I&apos;m here to answer questions about Sandeep&apos;s
+                        Hello! 👋 I&apos;m here to answer questions about Prakash&apos;s
                         work, experience, and projects. Ask me anything!
                       </p>
                     </div>

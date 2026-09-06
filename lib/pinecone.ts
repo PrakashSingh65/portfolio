@@ -11,7 +11,10 @@ const getPineconeClient = () => {
 
 // Lazy proxy object for backwards compatibility and to avoid module evaluation errors
 export const pinecone = {
-  Index: (name: string) => getPineconeClient().Index(name),
+  Index: (name: string) => {
+    const targetName = name || process.env.PINECONE_INDEX_NAME || "portfolio-index";
+    return getPineconeClient().Index(targetName);
+  },
   listIndexes: () => getPineconeClient().listIndexes(),
   createIndex: (options: any) => getPineconeClient().createIndex(options),
 } as unknown as Pinecone;

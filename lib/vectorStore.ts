@@ -28,8 +28,13 @@ export const retrieveContext = async (query: string, options?: RetrieveContextOp
     const k = options?.k !== undefined ? options?.k : 3;
     const filter = options?.filter;
 
-    const docs = await store.similaritySearch(query, k, filter);
+    let docs = await store.similaritySearch(query, k, filter);
     
+    // Fallback: If metadata filtering returned no results, retry without filter
+    if ((!docs || docs.length === 0) && filter) {
+      docs = await store.similaritySearch(query, k);
+    }
+
     if (!docs || docs.length === 0) {
       return "No relevant data found in portfolio";
     }

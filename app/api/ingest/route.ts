@@ -17,7 +17,7 @@ export async function GET() {
       console.log(`Index "${indexName}" not found. Creating it now... (this takes ~30 seconds)`);
       await pinecone.createIndex({
         name: indexName,
-        dimension: 384,
+        dimension: 1536, // Agar OpenAI use kar rahe hain toh 1536, agar HuggingFace/Local embeddings hain toh 384 rakhein
         metric: "cosine",
         spec: {
           serverless: {
@@ -78,7 +78,7 @@ Live Link: ${proj.liveLink || "N/A"}`;
       // Projects Summary document for count and list queries
       const projectNames = projects.map((p: any) => p.projectName).join(", ");
       const summaryContent = `Projects Overview & Summary:
-Sandeep Singh has a total of ${projects.length} projects.
+Prakash Singh has a total of ${projects.length} projects.
 Names of all projects: ${projectNames}.`;
 
       documents.push(new Document({
@@ -115,7 +115,7 @@ Category: ${skill.skillCategory || "Other"}`;
         .join("\n");
 
       const summaryContent = `Skills Overview & Summary:
-Sandeep Singh has a total of ${skills.length} skills.
+Prakash Singh has a total of ${skills.length} skills.
 Skills grouped by category:
 ${skillCategoriesSummary}`;
 
@@ -127,8 +127,8 @@ ${skillCategoriesSummary}`;
 
     // 3. Ingest About
     if (about) {
-      const content = `About Sandeep Singh:
-Biography / About: ${about.desc || ""}`;
+      const content = `About Prakash Singh:
+Biography / About: ${about.description || ""}`;
 
       documents.push(new Document({
         pageContent: content,
@@ -139,9 +139,9 @@ Biography / About: ${about.desc || ""}`;
     // 4. Ingest Intro
     if (intro) {
       const content = `Introduction / Identity:
-Name: ${intro.name || ""}
-Professional Bio: ${intro.desc || ""}
-Tech Stack Focus: ${intro.techStack ? intro.techStack.join(", ") : "N/A"}`;
+Name: ${intro.name || "Prakash Singh"}
+Professional Bio: ${intro.description || ""}
+Tech Stack Focus: ${intro.techStack ? intro.techStack.join(", ") : "Full-Stack Development"}`;
 
       documents.push(new Document({
         pageContent: content,
@@ -149,13 +149,13 @@ Tech Stack Focus: ${intro.techStack ? intro.techStack.join(", ") : "N/A"}`;
       }));
     }
 
-    // 5. Ingest Contact & Social Links (Static Info)
-    const contactContent = `Contact & Social Links for Sandeep Singh:
-- Email: sandeep.necoder@gmail.com
-- GitHub Profile: https://github.com/Sandeep-singh-99
-- LinkedIn Profile: https://www.linkedin.com/in/sandeep-singh-7a0219320
-- Twitter / X: https://x.com/SinghNecoder
-- Instagram: https://www.instagram.com/sandeep.necoder`;
+    // 5. Ingest Contact & Social Links (Static Info) - Fixed missing backtick here
+    const contactContent = `Contact & Social Links for Prakash Singh:
+- Email: pratapsing5656@gmail.com
+- GitHub Profile: https://github.com/PrakashSingh65
+- LinkedIn Profile: https://www.linkedin.com/in/prakash-singh-rajput-a89a15243/
+- Twitter / X: https://x.com/Prakash89795230
+- Instagram: https://www.instagram.com/coderps6/`;
 
     documents.push(new Document({
       pageContent: contactContent,

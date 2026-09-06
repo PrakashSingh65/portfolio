@@ -41,28 +41,25 @@ export async function POST(req: NextRequest) {
     switch (intent) {
       case "project":
         filter = { type: "project" };
-        k = isListOrCountQuery ? 8 : 3;
+        k = isListOrCountQuery ? 8 : 5;
         break;
       case "skill":
         filter = { type: "skill" };
-        k = isListOrCountQuery ? 8 : 3;
+        k = isListOrCountQuery ? 10 : 6;
         break;
       case "contact":
         filter = { type: "contact" };
-        k = 1; // Retrieve single compiled contact info document
+        k = 2; // Retrieve contact info document
         break;
       case "intro":
-        filter = { type: "intro" };
-        k = 1; // Retrieve introduction document
-        break;
       case "about":
-        filter = { type: "about" };
-        k = 1; // Retrieve biography document
+        filter = { type: { $in: ["intro", "about"] } };
+        k = 4; // Retrieve both identity intro and detailed about background
         break;
       case "general":
       default:
         filter = undefined; // Search all document types
-        k = 3;
+        k = 4;
         break;
     }
 
@@ -71,7 +68,7 @@ export async function POST(req: NextRequest) {
 
     // Gemini model
     const model = new ChatGoogleGenerativeAI({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       maxOutputTokens: 800,
       apiKey: process.env.GOOGLE_API_KEY!,
     });
