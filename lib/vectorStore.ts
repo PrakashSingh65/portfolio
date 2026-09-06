@@ -1,6 +1,6 @@
 import { PineconeStore } from "@langchain/pinecone";
 import { pinecone, indexName } from "./pinecone";
-import { embeddings } from "./embeddings";
+import { embeddings } from "./embedding";
 
 let cachedStore: PineconeStore | null = null;
 

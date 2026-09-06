@@ -1,4 +1,4 @@
-import ChatMessage from "../models/chatMessage.model";
+import ChatMessage from "../models/chatMassage.Model";
 import { ConnectDB } from "./db";
 
 export const saveMessage = async (

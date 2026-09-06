@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import "dotenv/config";
 import { Document } from "@langchain/core/documents";
-import { embeddings } from "../lib/embeddings";
+import { embeddings } from "../lib/embedding";
 import About, { IAbout } from "../models/about.model";
 import Project, { IProject } from "../models/project.model";
 import Skill, { ISkill } from "../models/skill.model";
@@ -61,7 +61,7 @@ Live: ${proj.liveLink || "N/A"}
   intros.forEach((intro) => {
     const content = `
 Intro: ${intro.name}
-Description: ${intro.desc}
+Description: ${intro.description}
 Tech Stack: ${intro.techStack?.join(", ") || "N/A"}
 Image: ${intro.image}
 File: ${intro.file}
@@ -79,7 +79,7 @@ File: ${intro.file}
   // ---------------------------
   const abouts = (await About.find().lean()) as unknown as IAbout[];
   abouts.forEach((about) => {
-    const content = `About: ${about.desc}`;
+    const content = `About: ${about.description}`;
     documents.push(
       new Document({
         pageContent: content,

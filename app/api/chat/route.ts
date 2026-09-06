@@ -1,77 +1,127 @@
-import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextRequest } from "next/server";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { retrieveContext } from "../../../lib/vectorStore";
+import { saveMessage, getChatHistory } from "../../../lib/memory";
+import { systemPromptTemplate } from "../../../lib/prompt";
+import { detectIntent } from "../../../lib/intent";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-
-const SYSTEM_INSTRUCTION =
-  "You are Prakash Singh's official AI assistant on his portfolio website. Prakash Singh is a Full-Stack and Front-End Developer pursuing his MCA (Master of Computer Applications). Answer visitor questions professionally using clean markdown formatting (bullet points, bold text) about his skills (React, Next.js, Node.js, MongoDB, etc.), projects, education, and background.";
-
-const CANDIDATE_MODELS = [
-  "gemini-flash-latest",
-  "gemini-3.6-flash",
-  "gemini-3.5-flash-lite",
-];
-
-export async function POST(req: Request) {
+// ─── Main POST handler ────────────────────────────────────────────────
+export async function POST(req: NextRequest) {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json(
-        { error: "GEMINI_API_KEY is not configured" },
-        { status: 500 }
-      );
+    const { message, sessionId } = await req.json();
+
+    if (!message || !sessionId) {
+      return new Response("Invalid request", { status: 400 });
     }
 
-    const { messages } = await req.json();
+    const cleanMessage = message.trim().slice(0, 1000);
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return NextResponse.json(
-        { error: "Messages array is required" },
-        { status: 400 }
-      );
-    }
+    // Save user message in MongoDB chat memory
+    await saveMessage(sessionId, "user", cleanMessage);
 
-    const formattedMessages = messages.map((msg: any) => ({
-      role: msg.role === "user" ? "user" : "model",
-      parts: [{ text: msg.content }],
-    }));
+    // Fetch conversation memory from MongoDB
+    const history = await getChatHistory(sessionId);
 
-    const history = formattedMessages.slice(0, -1);
-    if (history.length > 0 && history[0].role === "model") {
-      history.shift();
-    }
+    // Detect user query intent (hybrid keyword + LLM classification)
+    const intent = await detectIntent(cleanMessage);
+    console.log(`[RAG Router] Query: "${cleanMessage}" | Intent: "${intent}"`);
 
-    const lastMessage = messages[messages.length - 1].content;
+    // Determine metadata filter and retrieval size based on intent
+    let filter: Record<string, any> | undefined = undefined;
+    let k = 3;
 
-    let responseText = "";
-    let lastError: any = null;
+    const isListOrCountQuery = cleanMessage.includes("all") || 
+                               cleanMessage.includes("list") || 
+                               cleanMessage.includes("how many") || 
+                               cleanMessage.includes("total") ||
+                               cleanMessage.includes("count") ||
+                               cleanMessage.includes("summary");
 
-    for (const modelName of CANDIDATE_MODELS) {
-      try {
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          systemInstruction: SYSTEM_INSTRUCTION,
-        });
-
-        const chat = model.startChat({ history });
-        const result = await chat.sendMessage(lastMessage);
-        responseText = result.response.text();
+    switch (intent) {
+      case "project":
+        filter = { type: "project" };
+        k = isListOrCountQuery ? 8 : 3;
         break;
-      } catch (err: any) {
-        console.warn(`Gemini model ${modelName} failed, trying fallback:`, err?.message || err);
-        lastError = err;
-      }
+      case "skill":
+        filter = { type: "skill" };
+        k = isListOrCountQuery ? 8 : 3;
+        break;
+      case "contact":
+        filter = { type: "contact" };
+        k = 1; // Retrieve single compiled contact info document
+        break;
+      case "intro":
+        filter = { type: "intro" };
+        k = 1; // Retrieve introduction document
+        break;
+      case "about":
+        filter = { type: "about" };
+        k = 1; // Retrieve biography document
+        break;
+      case "general":
+      default:
+        filter = undefined; // Search all document types
+        k = 3;
+        break;
     }
 
-    if (!responseText && lastError) {
-      throw lastError;
-    }
+    // Retrieve context dynamically from Pinecone with metadata filter
+    const retrievedContext = await retrieveContext(cleanMessage, { filter, k });
 
-    return NextResponse.json({ reply: responseText });
+    // Gemini model
+    const model = new ChatGoogleGenerativeAI({
+      model: "gemini-2.5-flash",
+      maxOutputTokens: 800,
+      apiKey: process.env.GOOGLE_API_KEY!,
+    });
+
+    const chain = systemPromptTemplate
+      .pipe(model)
+      .pipe(new StringOutputParser());
+
+    const stream = await chain.stream({
+      retrieved_context: retrievedContext,
+      chat_history: history,
+      message: cleanMessage,
+    });
+
+    let fullResponse = "";
+    const encoder = new TextEncoder();
+
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of stream) {
+            fullResponse += chunk;
+            controller.enqueue(encoder.encode(chunk));
+
+            // smoother streaming
+            await new Promise((r) => setTimeout(r, 0));
+          }
+
+          // Save assistant message to MongoDB memory
+          saveMessage(sessionId, "assistant", fullResponse).catch(console.error);
+
+          controller.close();
+        } catch (err) {
+          controller.error(err);
+        }
+      },
+    });
+
+    return new Response(readable, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache",
+      },
+    });
   } catch (error: any) {
-    console.error("Gemini Error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to fetch response" },
-      { status: 500 }
-    );
+    console.error("[Chat API Error]:", error);
+    const errMsg = error?.message || "";
+    if (errMsg.includes("PINECONE_API_KEY") || errMsg.includes("HUGGINGFACE_API_KEY") || errMsg.includes("GOOGLE_API_KEY")) {
+      return new Response(`Configuration Error: ${errMsg}. Please ensure it is set in your .env file.`, { status: 500 });
+    }
+    return new Response(`Server Error: ${errMsg}`, { status: 500 });
   }
 }
