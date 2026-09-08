@@ -261,7 +261,7 @@ export default function IntroClient({ data }: IntroClientProps) {
               </motion.div>
             </motion.div>
 
-            {/* Stats Row */}
+            {/* Stats Row 
             <motion.div {...fadeLeft(0.25)} className="grid grid-cols-3 gap-4 w-full max-w-sm">
               {stats.map(({ value, label }) => (
                 <div
@@ -274,9 +274,9 @@ export default function IntroClient({ data }: IntroClientProps) {
                   <span className="text-xs text-slate-500 dark:text-white/50 mt-1 text-center">{label}</span>
                 </div>
               ))}
-            </motion.div>
+            </motion.div>*/}
 
-            {/* Services mini row */}
+            {/* Services mini row 
             <motion.div {...fadeLeft(0.3)} className="flex gap-3 w-full max-w-sm">
               {[
                 { icon: Code2, label: "Web Dev" },
@@ -291,7 +291,7 @@ export default function IntroClient({ data }: IntroClientProps) {
                   <span className="text-xs text-slate-600 dark:text-white/60">{label}</span>
                 </div>
               ))}
-            </motion.div>
+            </motion.div>*/}
           </div>
         </div>
       </section>
