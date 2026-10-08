@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MarkdownRender } from "./MarkdownRender";
@@ -18,28 +18,30 @@ interface ChatMessage {
   content: string;
 }
 
+const emptySubscribe = () => () => {};
+
+function getSessionSnapshot(): string {
+  if (typeof window === "undefined") return "";
+  let id = localStorage.getItem("portfolio_chat_session");
+  if (!id) {
+    id = uuidv4();
+    localStorage.setItem("portfolio_chat_session", id);
+  }
+  return id;
+}
+
 export function GlobalChatWidget() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [chatHistory, setChatHistory] = React.useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = React.useState(false);
-  const [sessionId, setSessionId] = React.useState<string>("");
+  const sessionId = React.useSyncExternalStore(emptySubscribe, getSessionSnapshot, () => "");
 
   // AbortController ref — used to cancel in-flight streams
   const abortControllerRef = React.useRef<AbortController | null>(null);
 
   // Scroll container ref
   const scrollRef = React.useRef<HTMLDivElement>(null);
-
-  // Initialize session ID from localStorage
-  React.useEffect(() => {
-    let id = localStorage.getItem("portfolio_chat_session");
-    if (!id) {
-      id = uuidv4();
-      localStorage.setItem("portfolio_chat_session", id);
-    }
-    setSessionId(id);
-  }, []);
 
   // Auto-scroll to bottom whenever chat updates
   React.useEffect(() => {
@@ -117,8 +119,8 @@ export function GlobalChatWidget() {
             return updated;
           });
         }
-      } catch (error: any) {
-        if (error.name === "AbortError") {
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === "AbortError") {
           // Stream was intentionally cancelled — don't show error
           return;
         }

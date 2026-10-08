@@ -9,7 +9,7 @@ export async function GET() {
         await ConnectDB();
         const about = await About.findOne({});
         return NextResponse.json({ data: about }, { status: 200 });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: "Failed to fetch about section" }, { status: 500 });
     }
 }
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
         revalidatePath("/");
         return NextResponse.json({data: newAbout}, { status: 201 });
 
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: "Failed to create about section" }, { status: 500 });
     }
 }

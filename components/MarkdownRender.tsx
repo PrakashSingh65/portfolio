@@ -3,17 +3,13 @@
 import MDEditor from "@uiw/react-md-editor";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
-
+const emptySubscribe = () => () => {};
 
 export function MarkdownRender({ content }: { content: string }) {
   const { theme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   if (!mounted) {
     return null;

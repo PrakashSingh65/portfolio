@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus, Pencil, Loader2, ImageIcon } from 'lucide-react'
+import { Plus, Pencil, Loader2 } from 'lucide-react'
+import Image from 'next/image'
 
 export interface SkillData {
   id?: string;
@@ -53,9 +54,9 @@ export default function SkillFormDialog({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Sync state when dialog opens or editing target changes
-  useEffect(() => {
-    if (open) {
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
       if (activeSkill) {
         setSkillCategory(activeSkill.skillCategory || "");
         setSkillName(activeSkill.skillName || "");
@@ -70,7 +71,7 @@ export default function SkillFormDialog({
         setPreviewUrl(null);
       }
     }
-  }, [open, activeSkill]);
+  };
 
   // Clean up object URL when component unmounts or preview changes
   useEffect(() => {
@@ -159,7 +160,7 @@ export default function SkillFormDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {triggerButton || (
           <Button variant={isEdit ? "outline" : "default"} size="sm">
@@ -235,9 +236,12 @@ export default function SkillFormDialog({
               {previewUrl && (
                 <div className="flex items-center gap-3 mt-1 p-2 border rounded-md bg-muted/30">
                   <div className="w-12 h-12 relative flex items-center justify-center bg-background rounded border p-1 shrink-0 overflow-hidden">
-                    <img 
+                    <Image 
                       src={previewUrl} 
                       alt="Skill preview" 
+                      width={48}
+                      height={48}
+                      unoptimized
                       className="max-h-full max-w-full object-contain" 
                     />
                   </div>

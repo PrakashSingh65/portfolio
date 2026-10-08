@@ -18,7 +18,7 @@ export const getVectorStore = async () => {
 };
 
 export interface RetrieveContextOptions {
-  filter?: Record<string, any>;
+  filter?: Record<string, unknown>;
   k?: number;
 }
 

@@ -59,7 +59,7 @@ export default function SkillGrid({ skills }: { skills: ISkill[] }) {
               {category}
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {categorySkills.map((skill, index) => (
+              {categorySkills.map((skill) => (
                 <div
                   key={skill._id}
                   className="flex items-center justify-start space-x-3 px-4 py-3 rounded-xl

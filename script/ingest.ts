@@ -198,8 +198,8 @@ Summary: ${blog.content?.slice(0, 600) || "Technical blog article by Prakash Sin
         })
       );
     });
-  } catch (e: any) {
-    console.warn("Could not load blogs:", e.message);
+  } catch (e: unknown) {
+    console.warn("Could not load blogs:", e instanceof Error ? e.message : String(e));
   }
 
   // ---------------------------
@@ -219,8 +219,8 @@ Prakash has earned ${certs.length} professional certifications in full-stack dev
         })
       );
     }
-  } catch (e: any) {
-    console.warn("Could not load certificates:", e.message);
+  } catch (e: unknown) {
+    console.warn("Could not load certificates:", e instanceof Error ? e.message : String(e));
   }
 
   console.log(`Total documents to upsert: ${documents.length}`);
@@ -235,8 +235,8 @@ Prakash has earned ${certs.length} professional certifications in full-stack dev
     await pineconeIndex.deleteAll();
     console.log("Existing records cleared.");
     await new Promise((resolve) => setTimeout(resolve, 3000));
-  } catch (err: any) {
-    console.warn("Note during index clear:", err.message);
+  } catch (err: unknown) {
+    console.warn("Note during index clear:", err instanceof Error ? err.message : String(err));
   }
 
   const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {

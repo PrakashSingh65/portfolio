@@ -35,7 +35,7 @@ export async function GET() {
     await ConnectDB();
     const blogs = await Blog.find({}).sort({ createdAt: -1 });
     return NextResponse.json({ data: blogs }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch blogs" }, { status: 500 });
   }
 }

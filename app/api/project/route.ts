@@ -36,7 +36,7 @@ export async function GET() {
     await ConnectDB();
     const projects = await Project.find({}).sort({ priority: 1, createdAt: -1 });
     return NextResponse.json({ data: projects }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 });
   }
 }
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
     revalidatePath("/");
     
     return NextResponse.json({ data: newProject }, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to create project" },
       { status: 500 },

@@ -35,7 +35,7 @@ export async function GET() {
     await ConnectDB();
     const certificates = await Certificate.find({}).sort({ priority: 1, createdAt: -1 });
     return NextResponse.json({ data: certificates }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch certificates" }, { status: 500 });
   }
 }
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     revalidatePath("/");
     
     return NextResponse.json({ data: newCertificate }, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to create certificate" },
       { status: 500 },

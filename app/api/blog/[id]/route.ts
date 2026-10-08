@@ -42,7 +42,7 @@ export async function GET(
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
     return NextResponse.json({ data: blog }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch blog" }, { status: 500 });
   }
 }

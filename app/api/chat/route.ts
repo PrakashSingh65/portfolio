@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     console.log(`[RAG Router] Query: "${cleanMessage}" | Intent: "${intent}"`);
 
     // Determine metadata filter and retrieval size based on intent
-    let filter: Record<string, any> | undefined = undefined;
+    let filter: Record<string, unknown> | undefined = undefined;
     let k = 3;
 
     const isListOrCountQuery = cleanMessage.includes("all") || 
@@ -113,9 +113,9 @@ export async function POST(req: NextRequest) {
         "Cache-Control": "no-cache",
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[Chat API Error]:", error);
-    const errMsg = error?.message || "";
+    const errMsg = error instanceof Error ? error.message : String(error);
     if (errMsg.includes("PINECONE_API_KEY") || errMsg.includes("HUGGINGFACE_API_KEY") || errMsg.includes("GOOGLE_API_KEY")) {
       return new Response(`Configuration Error: ${errMsg}. Please ensure it is set in your .env file.`, { status: 500 });
     }

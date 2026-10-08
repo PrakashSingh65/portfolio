@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, type Transition } from "framer-motion";
-import { ArrowRight, Code2, Layers, Sparkles } from "lucide-react";
+import { ArrowRight, Code2, Sparkles } from "lucide-react";
 
 const ease = "easeOut" as const;
 
@@ -22,12 +22,6 @@ const fadeLeft = (delay = 0) => ({
 
 const defaultTechStack = ["React", "Next.js", "TypeScript", "Node.js", "Tailwind", "MongoDB"];
 
-const stats = [
-  { value: "2+", label: "Years Exp." },
-  { value: "20+", label: "Projects Built" },
-  { value: "100%", label: "Satisfaction" },
-];
-
 // Custom typewriter component for typing out tech stack list
 function Typewriter({ words, speed = 150, delay = 2000 }: { words: string[], speed?: number, delay?: number }) {
   const [index, setIndex] = useState(0);
@@ -43,9 +37,11 @@ function Typewriter({ words, speed = 150, delay = 2000 }: { words: string[], spe
     }
 
     if (subIndex === 0 && reverse) {
-      setReverse(false);
-      setIndex((prev) => (prev + 1) % words.length);
-      return;
+      const timeout = setTimeout(() => {
+        setReverse(false);
+        setIndex((prev) => (prev + 1) % words.length);
+      }, 200);
+      return () => clearTimeout(timeout);
     }
 
     const timeout = setTimeout(() => {

@@ -31,7 +31,7 @@ export async function GET() {
     await ConnectDB();
     const intro = await Intro.findOne({});
     return NextResponse.json({ data: intro }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch intro data" }, { status: 500 });
   }
 }

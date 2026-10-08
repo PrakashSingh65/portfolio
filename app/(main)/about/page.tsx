@@ -27,7 +27,7 @@ export default async function AboutPage() {
                   I specialize in building scalable web applications with a focus on performance and beautiful interfaces. With a strong foundation in modern JavaScript frameworks, I enjoy bridging the gap between design and engineering.
                 </p>
                 <p className="text-slate-700 dark:text-white/70 leading-relaxed text-lg">
-                  When I'm not coding, you can find me exploring new technologies, contributing to open-source, or enjoying a good cup of coffee.
+                  When I&apos;m not coding, you can find me exploring new technologies, contributing to open-source, or enjoying a good cup of coffee.
                 </p>
               </div>
             )}

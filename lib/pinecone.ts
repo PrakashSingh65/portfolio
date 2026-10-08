@@ -16,7 +16,7 @@ export const pinecone = {
     return getPineconeClient().Index(targetName);
   },
   listIndexes: () => getPineconeClient().listIndexes(),
-  createIndex: (options: any) => getPineconeClient().createIndex(options),
+  createIndex: (options: Parameters<Pinecone["createIndex"]>[0]) => getPineconeClient().createIndex(options),
 } as unknown as Pinecone;
 
 export const indexName = process.env.PINECONE_INDEX_NAME || "portfolio-index";

@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { Document } from "@langchain/core/documents";
 import { ConnectDB } from "../../../lib/db";
-import Project from "../../../models/project.model";
-import Skill from "../../../models/skill.model";
-import About from "../../../models/about.model";
-import Intro from "../../../models/intro.model";
+import Project, { IProject } from "../../../models/project.model";
+import Skill, { ISkill } from "../../../models/skill.model";
+import About, { IAbout } from "../../../models/about.model";
+import Intro, { IIntro } from "../../../models/intro.model";
 import { getVectorStore } from "../../../lib/vectorStore";
 import { pinecone, indexName } from "../../../lib/pinecone";
+
+type IngestProject = IProject & { _id: string | { toString(): string } };
+type IngestSkill = ISkill & { _id: string | { toString(): string } };
 
 export async function GET() {
   try {
@@ -38,8 +41,8 @@ export async function GET() {
       console.log("Clearing Pinecone index...");
       await pineconeIndex.deleteAll();
       console.log("Pinecone index cleared successfully.");
-    } catch (err: any) {
-      console.warn("Could not clear index (index might be empty):", err.message);
+    } catch (err: unknown) {
+      console.warn("Could not clear index (index might be empty):", err instanceof Error ? err.message : String(err));
     }
 
     console.log("Connecting to Database...");
@@ -47,17 +50,17 @@ export async function GET() {
     
     console.log("Fetching data from MongoDB...");
     const [projects, skills, about, intro] = await Promise.all([
-      Project.find({}).lean() as Promise<any[]>,
-      Skill.find({}).lean() as Promise<any[]>,
-      About.findOne({}).lean() as Promise<any>,
-      Intro.findOne({}).lean() as Promise<any>,
+      Project.find({}).lean() as Promise<IngestProject[]>,
+      Skill.find({}).lean() as Promise<IngestSkill[]>,
+      About.findOne({}).lean() as Promise<IAbout | null>,
+      Intro.findOne({}).lean() as Promise<IIntro | null>,
     ]);
 
     const documents: Document[] = [];
 
     // 1. Ingest Projects
     if (projects && Array.isArray(projects)) {
-      projects.forEach((proj: any) => {
+      projects.forEach((proj: IngestProject) => {
         const content = `Project Name: ${proj.projectName || "Untitled"}
 Description: ${proj.projectDesc || ""}
 Detailed/Sub Description: ${proj.projectSubDesc || ""}
@@ -76,7 +79,7 @@ Live Link: ${proj.liveLink || "N/A"}`;
       });
 
       // Projects Summary document for count and list queries
-      const projectNames = projects.map((p: any) => p.projectName).join(", ");
+      const projectNames = projects.map((p: IngestProject) => p.projectName).join(", ");
       const summaryContent = `Projects Overview & Summary:
 Prakash Singh has a total of ${projects.length} projects.
 Names of all projects: ${projectNames}.`;
@@ -89,7 +92,7 @@ Names of all projects: ${projectNames}.`;
 
     // 2. Ingest Skills
     if (skills && Array.isArray(skills)) {
-      skills.forEach((skill: any) => {
+      skills.forEach((skill: IngestSkill) => {
         const content = `Skill: ${skill.skillName || ""}
 Category: ${skill.skillCategory || "Other"}`;
 
@@ -104,7 +107,7 @@ Category: ${skill.skillCategory || "Other"}`;
 
       // Skills Summary document for category grouping queries
       const skillsByCategory: Record<string, string[]> = {};
-      skills.forEach((s: any) => {
+      skills.forEach((s: IngestSkill) => {
         const cat = s.skillCategory || "Other";
         if (!skillsByCategory[cat]) skillsByCategory[cat] = [];
         skillsByCategory[cat].push(s.skillName);
@@ -169,8 +172,9 @@ Tech Stack Focus: ${intro.techStack ? intro.techStack.join(", ") : "Full-Stack D
     await vectorStore.addDocuments(documents);
     
     return NextResponse.json({ success: true, count: documents.length });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Ingestion failed:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
   }
 }

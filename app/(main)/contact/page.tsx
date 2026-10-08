@@ -48,11 +48,11 @@ export default function ContactPage() {
               </svg>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-800 dark:text-white">
-              Let's work together
+              Let&apos;s work together
             </h2>
             <p className="text-slate-600 dark:text-white/60 text-lg max-w-2xl">
-              I'm currently looking for new opportunities. Whether you have a
-              question or just want to say hi, I'll try my best to get back to
+              I&apos;m currently looking for new opportunities. Whether you have a
+              question or just want to say hi, I&apos;ll try my best to get back to
               you!
             </p>
           </div>
@@ -180,7 +180,7 @@ export default function ContactPage() {
                     hello@example.com
                   </a>
                   <p className="text-slate-400 dark:text-white/40 text-sm mt-1">
-                    We'll reply within 24 hours
+                    We&apos;ll reply within 24 hours
                   </p>
                 </div>
               </div>

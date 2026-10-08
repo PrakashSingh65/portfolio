@@ -4,7 +4,7 @@ import { ArrowRight, ExternalLink } from 'lucide-react';
 import { formatExternalUrl } from '@/lib/utils';
 
 interface ProjectCardProps {
-  _id: string;
+  _id?: string;
   projectName: string;
   projectDesc: string;
   projectSubDesc?: string;

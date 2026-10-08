@@ -74,7 +74,7 @@ export async function PUT(
       if (imagePublicId) {
           try {
             await cloudinary.uploader.destroy(imagePublicId);
-          } catch(e) {
+          } catch {
             console.log("Failed to delete old image from Cloudinary");
           }
       }
@@ -102,7 +102,7 @@ export async function PUT(
     revalidatePath("/");
     
     return NextResponse.json({ data: existingProject }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to update project" },
       { status: 500 },
@@ -126,7 +126,7 @@ export async function DELETE(
     if (existingProject.projectImagePublicId) {
       try {
         await cloudinary.uploader.destroy(existingProject.projectImagePublicId);
-      } catch(e) {
+      } catch {
         console.log("Failed to delete image from Cloudinary");
       }
     }
@@ -138,7 +138,7 @@ export async function DELETE(
     revalidatePath("/");
     
     return NextResponse.json({ message: "Project deleted successfully" }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to delete project" },
       { status: 500 },

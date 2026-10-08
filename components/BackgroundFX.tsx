@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 
 /* ─── Types ─────────────────────────────────────────────────────────── */
@@ -31,51 +31,46 @@ interface Particle {
   floatDuration: number;
 }
 
+const emptySubscribe = () => () => {};
+
+function generateStaticStars(): StaticStar[] {
+  return Array.from({ length: 100 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 2 + 0.5,
+    opacity: Math.random() * 0.7 + 0.3,
+    pulseDuration: Math.random() * 4 + 2,
+  }));
+}
+
+function generateShootingStars(): ShootingStar[] {
+  return Array.from({ length: 12 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 60,
+    delay: Math.random() * 18,
+    duration: Math.random() * 2.5 + 1.5,
+  }));
+}
+
+function generateParticles(): Particle[] {
+  return Array.from({ length: 28 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 3 + 2,
+    opacity: Math.random() * 0.35 + 0.1,
+    floatY: Math.random() * 30 + 10,
+    floatDuration: Math.random() * 8 + 5,
+  }));
+}
+
 /* ─── Component ─────────────────────────────────────────────────────── */
-export default function BackgroundFX() {
-  const [mounted, setMounted] = useState(false);
-  const [staticStars, setStaticStars] = useState<StaticStar[]>([]);
-  const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
-  const [particles, setParticles] = useState<Particle[]>([]);
-
-  useEffect(() => {
-    setMounted(true);
-
-    setStaticStars(
-      Array.from({ length: 100 }).map((_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.7 + 0.3,
-        pulseDuration: Math.random() * 4 + 2,
-      }))
-    );
-
-    setShootingStars(
-      Array.from({ length: 12 }).map((_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 60,
-        delay: Math.random() * 18,
-        duration: Math.random() * 2.5 + 1.5,
-      }))
-    );
-
-    setParticles(
-      Array.from({ length: 28 }).map((_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: Math.random() * 3 + 2,
-        opacity: Math.random() * 0.35 + 0.1,
-        floatY: Math.random() * 30 + 10,
-        floatDuration: Math.random() * 8 + 5,
-      }))
-    );
-  }, []);
-
-  if (!mounted) return null;
+function BackgroundFXContent() {
+  const [staticStars] = useState(generateStaticStars);
+  const [shootingStars] = useState(generateShootingStars);
+  const [particles] = useState(generateParticles);
 
   return (
     <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
@@ -288,4 +283,10 @@ export default function BackgroundFX() {
 
     </div>
   );
+}
+
+export default function BackgroundFX() {
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  if (!mounted) return null;
+  return <BackgroundFXContent />;
 }

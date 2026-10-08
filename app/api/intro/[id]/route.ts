@@ -63,7 +63,7 @@ export async function PUT(
       if (existingIntro.imagePublicId) {
         try {
           await cloudinary.uploader.destroy(existingIntro.imagePublicId);
-        } catch (e) {
+        } catch {
           console.log("Failed to delete old image from Cloudinary");
         }
       }
@@ -83,7 +83,7 @@ export async function PUT(
       if (existingIntro.filePublicId) {
         try {
           await cloudinary.uploader.destroy(existingIntro.filePublicId, { resource_type: "raw" });
-        } catch (e) {
+        } catch {
           console.log("Failed to delete old file from Cloudinary");
         }
       }
@@ -99,7 +99,7 @@ export async function PUT(
     revalidatePath("/");
 
     return NextResponse.json({ data: existingIntro }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to update intro" }, { status: 500 });
   }
 }
@@ -121,7 +121,7 @@ export async function DELETE(
     if (existingIntro.imagePublicId) {
       try {
         await cloudinary.uploader.destroy(existingIntro.imagePublicId);
-      } catch (e) {
+      } catch {
         console.log("Failed to delete image from Cloudinary");
       }
     }
@@ -129,7 +129,7 @@ export async function DELETE(
     if (existingIntro.filePublicId) {
       try {
         await cloudinary.uploader.destroy(existingIntro.filePublicId, { resource_type: "raw" });
-      } catch (e) {
+      } catch {
         console.log("Failed to delete file from Cloudinary");
       }
     }
@@ -140,7 +140,7 @@ export async function DELETE(
     revalidatePath("/");
 
     return NextResponse.json({ message: "Intro deleted successfully" }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to delete intro" }, { status: 500 });
   }
 }

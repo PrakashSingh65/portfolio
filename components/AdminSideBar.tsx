@@ -1,4 +1,4 @@
-import { Award, Brain, Briefcase, Home, HousePlug, Info, Newspaper } from "lucide-react";
+import { Award, Brain, Briefcase, Home, Info, Newspaper } from "lucide-react";
 import React from "react";
 import {
   Sidebar,

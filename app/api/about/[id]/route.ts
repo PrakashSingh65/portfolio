@@ -25,7 +25,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         revalidatePath("/admin-panel/about");
         revalidatePath("/");
         return NextResponse.json({ message: "About section deleted successfully" }, { status: 200 });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: "Failed to delete about section" }, { status: 500 });       
     }
 }
@@ -50,7 +50,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         revalidatePath("/");
         
         return NextResponse.json({ data: updatedAbout }, { status: 200 });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: "Failed to update about section" }, { status: 500 });
     }
 }

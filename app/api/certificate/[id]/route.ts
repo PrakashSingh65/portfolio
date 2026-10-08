@@ -60,7 +60,7 @@ export async function PUT(
       if (imagePublicId) {
           try {
             await cloudinary.uploader.destroy(imagePublicId);
-          } catch(e) {
+          } catch {
             console.log("Failed to delete old image from Cloudinary");
           }
       }
@@ -81,7 +81,7 @@ export async function PUT(
     revalidatePath("/");
     
     return NextResponse.json({ data: existingCertificate }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to update certificate" },
       { status: 500 },
@@ -105,7 +105,7 @@ export async function DELETE(
     if (existingCertificate.imageUrlPublicId) {
       try {
         await cloudinary.uploader.destroy(existingCertificate.imageUrlPublicId);
-      } catch(e) {
+      } catch {
         console.log("Failed to delete image from Cloudinary");
       }
     }
@@ -116,7 +116,7 @@ export async function DELETE(
     revalidatePath("/");
     
     return NextResponse.json({ message: "Certificate deleted successfully" }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to delete certificate" },
       { status: 500 },

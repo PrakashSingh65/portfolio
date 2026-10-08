@@ -11,7 +11,7 @@ export default function NameAnimation() {
                 transition={{duration: 0.8, ease: "easeOut"}}
                 className="text-4xl md:text-6xl front-bold text-white"
                 >
-                    Hi, I'm {""}
+                    Hi, I&apos;m{" "}
                     <span className="text-[#00FF88] bg-clip-text">
                         Prakash Singh
                     </span>

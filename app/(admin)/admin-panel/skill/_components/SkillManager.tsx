@@ -6,34 +6,44 @@ import { Badge } from '@/components/ui/badge'
 import { Code, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SkillFormDialog, { SkillData } from './SkillFormDialog'
+import Image from 'next/image'
 
 export default function SkillManager() {
   const [skills, setSkills] = useState<SkillData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshIndex, setRefreshIndex] = useState(0);
 
   useEffect(() => {
-    fetchSkills();
-  }, []);
-
-  const fetchSkills = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/skill');
-      const data = await res.json();
-      if (res.ok && data.data) {
-        // Map _id from Mongo back to id for the frontend
-        const mappedSkills = data.data.map((item: any) => ({
-          ...item,
-          id: item._id
-        }));
-        setSkills(mappedSkills);
+    let ignore = false;
+    async function load() {
+      try {
+        const res = await fetch('/api/skill');
+        const data = await res.json();
+        if (!ignore && res.ok && data.data) {
+          // Map _id from Mongo back to id for the frontend
+          const mappedSkills = data.data.map((item: SkillData) => ({
+            ...item,
+            id: item._id || item.id
+          }));
+          setSkills(mappedSkills);
+        }
+      } catch (error) {
+        console.error("Failed to fetch skills:", error);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
-    } catch (error) {
-      console.error("Failed to fetch skills:", error);
-    } finally {
-      setLoading(false);
     }
-  }
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, [refreshIndex]);
+
+  const fetchSkills = () => {
+    setRefreshIndex(prev => prev + 1);
+  };
 
   const handleDeleteSkill = async (id: string) => {
     if (!confirm("Are you sure you want to delete this skill?")) return;
@@ -72,7 +82,7 @@ export default function SkillManager() {
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed">
           <Code className="h-10 w-10 text-muted-foreground mb-4" />
           <h3 className="text-lg font-medium">No skills added yet</h3>
-          <p className="text-sm text-muted-foreground mb-4">You haven't added any skills to your portfolio.</p>
+          <p className="text-sm text-muted-foreground mb-4">You haven&apos;t added any skills to your portfolio.</p>
           <SkillFormDialog onSuccess={fetchSkills} />
         </Card>
       ) : (
@@ -88,9 +98,12 @@ export default function SkillManager() {
                   </div>
                   <div className="w-12 h-12 rounded-lg bg-secondary/40 border border-border/50 flex items-center justify-center shrink-0 overflow-hidden relative">
                     {skill.image ? (
-                      <img 
+                      <Image 
                         src={skill.image} 
                         alt={skill.skillName} 
+                        width={48}
+                        height={48}
+                        unoptimized
                         className="w-full h-full object-contain p-1.5" 
                       />
                     ) : (

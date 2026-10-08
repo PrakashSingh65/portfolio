@@ -1,40 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 
-export default function ShootingStars() {
-  const [mounted, setMounted] = useState(false);
-  const [shootingStars, setShootingStars] = useState<{ id: number; x: number; y: number; delay: number; duration: number }[]>([]);
-  const [staticStars, setStaticStars] = useState<{ id: number; x: number; y: number; size: number; opacity: number; pulseDuration: number }[]>([]);
+const emptySubscribe = () => () => {};
 
-  useEffect(() => {
-    setMounted(true);
-    // Generate static background stars
-    setStaticStars(
-      Array.from({ length: 80 }).map((_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.8 + 0.2,
-        pulseDuration: Math.random() * 4 + 2,
-      }))
-    );
+function generateStaticStars() {
+  return Array.from({ length: 80 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 2 + 0.5,
+    opacity: Math.random() * 0.8 + 0.2,
+    pulseDuration: Math.random() * 4 + 2,
+  }));
+}
 
-    // Generate animated shooting stars
-    setShootingStars(
-      Array.from({ length: 15 }).map((_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        delay: Math.random() * 15,
-        duration: Math.random() * 3 + 2,
-      }))
-    );
-  }, []);
+function generateShootingStars() {
+  return Array.from({ length: 15 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    delay: Math.random() * 15,
+    duration: Math.random() * 3 + 2,
+  }));
+}
 
-  if (!mounted) return null;
+function StarsContent() {
+  const [staticStars] = useState(generateStaticStars);
+  const [shootingStars] = useState(generateShootingStars);
 
   return (
     <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none hidden dark:block">
@@ -99,4 +93,10 @@ export default function ShootingStars() {
       ))}
     </div>
   );
+}
+
+export default function ShootingStars() {
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  if (!mounted) return null;
+  return <StarsContent />;
 }
