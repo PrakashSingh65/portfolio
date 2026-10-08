@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
 import BlogFormDialog from './BlogFormDialog'
 
+import Image from 'next/image'
+
 export interface Blog {
   _id: string;
   title: string;
@@ -19,25 +21,34 @@ export interface Blog {
 export default function BlogList() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchBlogs = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/blog');
-      const result = await res.json();
-      if (res.ok && result?.data) {
-        setBlogs(result.data);
-      }
-    } catch (error) {
-      console.error("Error fetching blogs:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [refreshIndex, setRefreshIndex] = useState(0);
 
   useEffect(() => {
-    fetchBlogs();
-  }, []);
+    let ignore = false;
+    async function load() {
+      try {
+        const res = await fetch('/api/blog');
+        const result = await res.json();
+        if (!ignore && res.ok && result?.data) {
+          setBlogs(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, [refreshIndex]);
+
+  const fetchBlogs = () => {
+    setRefreshIndex(prev => prev + 1);
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this blog post?")) return;
@@ -73,7 +84,7 @@ export default function BlogList() {
         {blogs.map((blog) => (
           <Card key={blog._id} className="overflow-hidden flex flex-col">
             <div className="h-48 w-full relative group bg-muted overflow-hidden">
-              <img src={blog.image} alt={blog.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+              <Image src={blog.image} alt={blog.title} fill unoptimized className="w-full h-full object-cover transition-transform group-hover:scale-105" />
             </div>
             <CardHeader className="pb-3 border-b border-border/40">
                <div className="flex justify-between items-start">

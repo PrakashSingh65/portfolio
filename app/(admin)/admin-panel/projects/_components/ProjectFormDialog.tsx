@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -42,27 +42,30 @@ export default function ProjectFormDialog({ projectToEdit, onSuccess }: ProjectF
   const [priority, setPriority] = useState("0");
   const [projectImage, setProjectImage] = useState<File | null>(null);
 
-  useEffect(() => {
-    if (open && projectToEdit) {
-      setProjectName(projectToEdit.projectName);
-      setProjectSubDesc(projectToEdit.projectSubDesc || "");
-      setProjectDesc(projectToEdit.projectDesc);
-      setProjectTechStack(projectToEdit.projectTechStack.join(", "));
-      setGithubLink(projectToEdit.githubLink);
-      setLiveLink(projectToEdit.liveLink);
-      setPriority(projectToEdit.priority.toString());
-      setProjectImage(null);
-    } else if (open && !projectToEdit) {
-      setProjectName("");
-      setProjectSubDesc("");
-      setProjectDesc("");
-      setProjectTechStack("");
-      setGithubLink("");
-      setLiveLink("");
-      setPriority("0");
-      setProjectImage(null);
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      if (projectToEdit) {
+        setProjectName(projectToEdit.projectName);
+        setProjectSubDesc(projectToEdit.projectSubDesc || "");
+        setProjectDesc(projectToEdit.projectDesc);
+        setProjectTechStack(projectToEdit.projectTechStack.join(", "));
+        setGithubLink(projectToEdit.githubLink);
+        setLiveLink(projectToEdit.liveLink);
+        setPriority(projectToEdit.priority.toString());
+        setProjectImage(null);
+      } else {
+        setProjectName("");
+        setProjectSubDesc("");
+        setProjectDesc("");
+        setProjectTechStack("");
+        setGithubLink("");
+        setLiveLink("");
+        setPriority("0");
+        setProjectImage(null);
+      }
     }
-  }, [open, projectToEdit]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,7 +119,7 @@ export default function ProjectFormDialog({ projectToEdit, onSuccess }: ProjectF
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {projectToEdit ? (
           <Button variant="outline" size="icon">

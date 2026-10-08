@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -30,12 +30,12 @@ export default function AboutFormDialog({ initialData, onSave }: AboutFormDialog
   // Dialog Form State
   const [editDescription, setEditDescription] = useState(initialData.description);
 
-  // Sync state if initialData changes
-  useEffect(() => {
-    if (open) {
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
       setEditDescription(initialData.description);
     }
-  }, [open, initialData]);
+  };
 
   const handleSave = () => {
     onSave({
@@ -45,7 +45,7 @@ export default function AboutFormDialog({ initialData, onSave }: AboutFormDialog
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="absolute top-4 right-4">
           <Pencil className="w-4 h-4 mr-2" />

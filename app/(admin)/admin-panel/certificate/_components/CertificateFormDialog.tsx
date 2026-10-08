@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -27,15 +27,18 @@ export default function CertificateFormDialog({ certificateToEdit, onSuccess }: 
   const [priority, setPriority] = useState("0");
   const [certificateImage, setCertificateImage] = useState<File | null>(null);
 
-  useEffect(() => {
-    if (open && certificateToEdit) {
-      setPriority(certificateToEdit.priority.toString());
-      setCertificateImage(null);
-    } else if (open && !certificateToEdit) {
-      setPriority("0");
-      setCertificateImage(null);
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      if (certificateToEdit) {
+        setPriority(certificateToEdit.priority.toString());
+        setCertificateImage(null);
+      } else {
+        setPriority("0");
+        setCertificateImage(null);
+      }
     }
-  }, [open, certificateToEdit]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +82,7 @@ export default function CertificateFormDialog({ certificateToEdit, onSuccess }: 
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {certificateToEdit ? (
           <Button variant="outline" size="icon">

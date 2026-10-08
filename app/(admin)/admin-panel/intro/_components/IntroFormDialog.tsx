@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -41,18 +41,16 @@ export default function IntroFormDialog({ initialData, onSave, isLoading }: Intr
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
 
-  // Sync state if initialData changes (or when dialog opens, though simple sync is fine)
-  useEffect(() => {
-    if (open) {
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
       setEditUsername(initialData.username);
       setEditDescription(initialData.description);
-      
-      // Protect against empty titles array
       setEditTitles(initialData.titles?.length ? initialData.titles : [""]);
       setImageFile(null);
       setResumeFile(null);
     }
-  }, [open, initialData]);
+  };
 
   const addTitleField = () => setEditTitles([...editTitles, ""]);
   const removeTitleField = (index: number) => setEditTitles(editTitles.filter((_, i) => i !== index));
@@ -75,7 +73,7 @@ export default function IntroFormDialog({ initialData, onSave, isLoading }: Intr
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="absolute top-4 right-4">
           <Pencil className="w-4 h-4 mr-2" />
@@ -86,7 +84,7 @@ export default function IntroFormDialog({ initialData, onSave, isLoading }: Intr
         <DialogHeader>
           <DialogTitle>Edit Introduction</DialogTitle>
           <DialogDescription>
-            Make changes to your intro section here. Click save when you're done.
+            Make changes to your intro section here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-6 py-4">

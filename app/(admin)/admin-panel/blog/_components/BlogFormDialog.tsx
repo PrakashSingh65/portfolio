@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -37,19 +37,22 @@ export default function BlogFormDialog({ blogToEdit, onSuccess }: BlogFormDialog
   const [tags, setTags] = useState("");
   const [blogImage, setBlogImage] = useState<File | null>(null);
 
-  useEffect(() => {
-    if (open && blogToEdit) {
-      setTitle(blogToEdit.title);
-      setContent(blogToEdit.content);
-      setTags(blogToEdit.tags.join(", "));
-      setBlogImage(null);
-    } else if (open && !blogToEdit) {
-      setTitle("");
-      setContent("");
-      setTags("");
-      setBlogImage(null);
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      if (blogToEdit) {
+        setTitle(blogToEdit.title);
+        setContent(blogToEdit.content);
+        setTags(blogToEdit.tags.join(", "));
+        setBlogImage(null);
+      } else {
+        setTitle("");
+        setContent("");
+        setTags("");
+        setBlogImage(null);
+      }
     }
-  }, [open, blogToEdit]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +102,7 @@ export default function BlogFormDialog({ blogToEdit, onSuccess }: BlogFormDialog
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {blogToEdit ? (
           <Button variant="outline" size="icon">

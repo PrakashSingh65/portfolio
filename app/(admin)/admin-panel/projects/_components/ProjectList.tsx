@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
 import ProjectFormDialog from './ProjectFormDialog'
+import Image from 'next/image'
 
 export interface Project {
   _id: string;
@@ -22,25 +23,34 @@ export interface Project {
 export default function ProjectList() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchProjects = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/project');
-      const result = await res.json();
-      if (res.ok && result?.data) {
-        setProjects(result.data);
-      }
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [refreshIndex, setRefreshIndex] = useState(0);
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    let ignore = false;
+    async function load() {
+      try {
+        const res = await fetch('/api/project');
+        const result = await res.json();
+        if (!ignore && res.ok && result?.data) {
+          setProjects(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, [refreshIndex]);
+
+  const fetchProjects = () => {
+    setRefreshIndex(prev => prev + 1);
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this project?")) return;
@@ -76,7 +86,7 @@ export default function ProjectList() {
         {projects.map((proj) => (
           <Card key={proj._id} className="overflow-hidden flex flex-col">
             <div className="h-48 w-full relative group bg-muted overflow-hidden">
-              <img src={proj.projectImage} alt={proj.projectName} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+              <Image src={proj.projectImage} alt={proj.projectName} fill unoptimized className="w-full h-full object-cover transition-transform group-hover:scale-105" />
             </div>
             <CardHeader className="pb-3 border-b border-border/40">
                <div className="flex justify-between items-start">

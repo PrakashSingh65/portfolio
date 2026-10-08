@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import IntroFormDialog, { IntroData } from './IntroFormDialog'
+import Image from 'next/image'
 
 export default function IntroCard() {
   const [introData, setIntroData] = useState<IntroData>({
@@ -21,37 +22,40 @@ export default function IntroCard() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-
   useEffect(() => {
-    fetchIntroData();
-  }, []);
-
-  const fetchIntroData = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/intro');
-      const result = await res.json();
-      
-      if (res.ok && result?.data) {
-        setHasIntro(true);
-        setIntroId(result.data._id);
-        setIntroData({
-          username: result.data.name,
-          description: result.data.description,
-          titles: result.data.techStack,
-          hasPdf: !!result.data.file,
-        });
-        setImageUrl(result.data.image);
-      } else {
-        setHasIntro(false);
-        setIntroId(null);
+    let ignore = false;
+    async function load() {
+      try {
+        const res = await fetch('/api/intro');
+        const result = await res.json();
+        
+        if (!ignore && res.ok && result?.data) {
+          setHasIntro(true);
+          setIntroId(result.data._id);
+          setIntroData({
+            username: result.data.name,
+            description: result.data.description,
+            titles: result.data.techStack,
+            hasPdf: !!result.data.file,
+          });
+          setImageUrl(result.data.image);
+        } else if (!ignore) {
+          setHasIntro(false);
+          setIntroId(null);
+        }
+      } catch (error) {
+        console.error("Error fetching intro data:", error);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
-    } catch (error) {
-      console.error("Error fetching intro data:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const handleSave = async (newData: IntroData) => {
     try {
@@ -163,7 +167,7 @@ export default function IntroCard() {
       <CardHeader className="flex flex-col sm:flex-row items-center gap-6 pb-6 mt-4">
         <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center shrink-0 border-2 border-primary/10 overflow-hidden">
           {imageUrl ? (
-            <img src={imageUrl} alt="Profile" className="w-full h-full object-cover" />
+            <Image src={imageUrl} alt="Profile" width={96} height={96} unoptimized className="w-full h-full object-cover" />
           ) : (
              <UserCircle className="w-16 h-16 text-muted-foreground" />
           )}

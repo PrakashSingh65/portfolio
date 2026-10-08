@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
 import CertificateFormDialog from './CertificateFormDialog'
+import Image from 'next/image'
 
 export interface Certificate {
   _id: string;
@@ -17,25 +18,34 @@ export interface Certificate {
 export default function CertificateList() {
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchCertificates = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/certificate');
-      const result = await res.json();
-      if (res.ok && result?.data) {
-        setCertificates(result.data);
-      }
-    } catch (error) {
-      console.error("Error fetching certificates:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [refreshIndex, setRefreshIndex] = useState(0);
 
   useEffect(() => {
-    fetchCertificates();
-  }, []);
+    let ignore = false;
+    async function load() {
+      try {
+        const res = await fetch('/api/certificate');
+        const result = await res.json();
+        if (!ignore && res.ok && result?.data) {
+          setCertificates(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching certificates:", error);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, [refreshIndex]);
+
+  const fetchCertificates = () => {
+    setRefreshIndex(prev => prev + 1);
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this certificate?")) return;
@@ -71,7 +81,7 @@ export default function CertificateList() {
         {certificates.map((cert) => (
           <Card key={cert._id} className="overflow-hidden flex flex-col">
             <div className="h-48 w-full relative group bg-muted overflow-hidden">
-              <img src={cert.imageUrl} alt="Certificate" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+              <Image src={cert.imageUrl} alt="Certificate" fill unoptimized className="w-full h-full object-cover transition-transform group-hover:scale-105" />
             </div>
             <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
               <div className="flex justify-between items-center border-b border-border/40 pb-4">
