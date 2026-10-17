@@ -95,3 +95,109 @@
     @apply font-sans;
  }
 }
+
+/* ─── GPU-Accelerated Background Keyframes (Off Main-Thread) ─── */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes shootingStar {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  16% {
+    opacity: 1;
+  }
+  24% {
+    transform: translateX(-1400px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-1400px);
+    opacity: 0;
+  }
+}
+
+@keyframes orbDriftSlow {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(35px, -25px);
+  }
+}
+
+@keyframes orbDriftReverse {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-30px, 20px);
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.55;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateX(-50%) scale(1.04);
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle infinite ease-in-out;
+}
+
+.animate-shooting {
+  animation: shootingStar infinite linear;
+}
+
+.animate-orb-slow {
+  animation: orbDriftSlow 18s infinite ease-in-out;
+}
+
+.animate-orb-reverse {
+  animation: orbDriftReverse 22s infinite ease-in-out;
+}
+
+.animate-float-slow {
+  animation: floatSlow 7s infinite ease-in-out;
+}
+
+.animate-pulse-slow {
+  animation: pulseGlow 8s infinite ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-twinkle,
+  .animate-shooting,
+  .animate-orb-slow,
+  .animate-orb-reverse,
+  .animate-float-slow,
+  .animate-pulse-slow {
+    animation: none !important;
+  }
+}

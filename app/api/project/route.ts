@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
 import { formatExternalUrl } from "@/lib/utils";
+import { requireAuth } from "@/lib/apiAuth";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -43,6 +44,9 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const { errorResponse } = await requireAuth();
+    if (errorResponse) return errorResponse;
+
     await ConnectDB();
     
     const formData = await req.formData();

@@ -6,6 +6,11 @@ import Certificate, {
 
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { MoveRight } from "lucide-react";
+
+export const revalidate = 60;
 
 const CertificateGallery = dynamic(
   () => import("@/components/CertificateGallery"),
@@ -19,40 +24,46 @@ const CertificateGallery = dynamic(
     ),
   }
 );
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { MoveRight } from "lucide-react";
 
 async function fetchCertificates(): Promise<ICertificate[]> {
-  await ConnectDB();
-  const certificates = await Certificate.find()
-    .sort({ priority: 1 })
-    .lean<ICertificate[]>();
-  return certificates.map((cert) => ({
-    ...cert,
-    _id: cert._id?.toString(),
-  }));
+  try {
+    await ConnectDB();
+    const certificates = await Certificate.find()
+      .sort({ priority: 1 })
+      .lean<ICertificate[]>();
+    return certificates.map((cert) => ({
+      ...cert,
+      _id: cert._id?.toString(),
+    }));
+  } catch (error) {
+    console.error("Error fetching certificates:", error);
+    return [];
+  }
 }
 
 export default async function CertificatePage() {
   const certificates = await fetchCertificates();
 
   return (
-    <div className="container mx-auto">
-      <div className="flex flex-col mb-2">
-        <p className="text-sm dark:text-gray-400 text-gray-700">Featured</p>
-        <h2 className="md:text-xl text-xl font-bold">Certificates</h2>
+    <section id="certificates" aria-label="Certifications & Credentials" className="container mx-auto px-4 py-8">
+      <div className="flex flex-col mb-6">
+        <p className="text-sm font-semibold dark:text-emerald-400 text-emerald-600 uppercase tracking-wider">
+          Featured
+        </p>
+        <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+          Certificates
+        </h2>
       </div>
-      
+
       <CertificateGallery certificates={certificates} limit={3} />
 
       <div className="flex justify-center w-full mt-12 mb-6">
-        <Link href="/certificate/all-certificate">
-          <Button variant="outline" className="hover:bg-white cursor-pointer">
-            Show all Certificates <MoveRight className="ml-2 h-4 w-4" />
+        <Link href="/certificate/all-certificate" aria-label="Browse all earned certificates">
+          <Button variant="outline" className="hover:bg-emerald-50 dark:hover:bg-zinc-800 cursor-pointer min-h-[44px]">
+            Show all Certificates <MoveRight className="ml-2 h-4 w-4" aria-hidden="true" />
           </Button>
         </Link>
       </div>
-    </div>
+    </section>
   );
 }

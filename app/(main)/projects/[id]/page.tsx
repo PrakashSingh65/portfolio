@@ -7,6 +7,9 @@ import Link from "next/link";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { MarkdownRender } from "@/components/MarkdownRender";
 import { formatExternalUrl } from "@/lib/utils";
+import type { Metadata } from "next";
+
+export const revalidate = 60;
 
 async function fetchProject(id: string): Promise<IProject | null> {
   try {
@@ -27,6 +30,30 @@ async function fetchProject(id: string): Promise<IProject | null> {
   }
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const project = await fetchProject(id);
+  if (!project) {
+    return {
+      title: "Project Not Found",
+    };
+  }
+
+  return {
+    title: project.projectName,
+    description: project.projectDesc?.slice(0, 160) || `Details for ${project.projectName}`,
+    openGraph: {
+      title: `${project.projectName} | Prakash Singh Projects`,
+      description: project.projectDesc?.slice(0, 160) || `Details for ${project.projectName}`,
+      images: project.projectImage ? [{ url: project.projectImage }] : [],
+    },
+  };
+}
+
 export default async function ProjectPageById({
   params,
 }: {
@@ -42,14 +69,15 @@ export default async function ProjectPageById({
           <h1 className="text-3xl md:text-5xl font-bold text-zinc-800 dark:text-zinc-100">
             Project Not Found
           </h1>
-          <p className="text-zinc-600 dark:text-zinc-400">
+          <p className="text-zinc-700 dark:text-zinc-300">
             The project you are looking for does not exist or has been removed.
           </p>
           <Link
             href="/projects"
-            className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
+            aria-label="Back to all projects"
+            className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:underline font-medium min-h-[44px]"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={18} aria-hidden="true" />
             Back to all projects
           </Link>
         </div>
@@ -67,9 +95,10 @@ export default async function ProjectPageById({
         <div>
           <Link
             href="/projects"
-            className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-medium"
+            aria-label="Back to projects overview"
+            className="inline-flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-medium min-h-[44px]"
           >
-            <ArrowLeft size={16} /> Back to Projects
+            <ArrowLeft size={16} aria-hidden="true" /> Back to Projects
           </Link>
         </div>
 
@@ -78,8 +107,9 @@ export default async function ProjectPageById({
           <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl">
             <Image
               src={project.projectImage}
-              alt={project.projectName}
+              alt={`Cover screenshot of ${project.projectName}`}
               fill
+              sizes="(max-width: 1024px) 100vw, 1024px"
               className="object-cover"
               priority
             />
@@ -104,9 +134,10 @@ export default async function ProjectPageById({
                 href={formattedLiveLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-medium hover:scale-105 transition-all shadow-md hover:shadow-emerald-500/20"
+                aria-label={`View live demo of ${project.projectName} (opens in new tab)`}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-medium hover:scale-105 transition-all shadow-md hover:shadow-emerald-500/20 min-h-[44px]"
               >
-                <ExternalLink size={18} />
+                <ExternalLink size={18} aria-hidden="true" />
                 View Live Demo
               </a>
             )}
@@ -116,9 +147,10 @@ export default async function ProjectPageById({
                 href={formattedGithubLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-white rounded-full font-medium hover:scale-105 transition-all border border-zinc-700"
+                aria-label={`View source code for ${project.projectName} on GitHub (opens in new tab)`}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-white rounded-full font-medium hover:scale-105 transition-all border border-zinc-700 min-h-[44px]"
               >
-                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
                 </svg>
                 Source Code
@@ -137,7 +169,7 @@ export default async function ProjectPageById({
               {project.projectTechStack.map((tech) => (
                 <span
                   key={tech}
-                  className="px-3.5 py-1.5 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  className="px-3.5 py-1.5 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm font-medium text-zinc-800 dark:text-zinc-200"
                 >
                   {tech}
                 </span>

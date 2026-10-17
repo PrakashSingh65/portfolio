@@ -1,143 +1,103 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
-import { motion } from "framer-motion";
-
-/* ─── Types ─────────────────────────────────────────────────────────── */
-interface StaticStar {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  opacity: number;
-  pulseDuration: number;
-}
-
-interface ShootingStar {
-  id: number;
-  x: number;
-  y: number;
-  delay: number;
-  duration: number;
-}
-
-interface Particle {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  opacity: number;
-  floatY: number;
-  floatDuration: number;
-}
+import { useSyncExternalStore } from "react";
 
 const emptySubscribe = () => () => {};
 
-function generateStaticStars(): StaticStar[] {
-  return Array.from({ length: 100 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 2 + 0.5,
-    opacity: Math.random() * 0.7 + 0.3,
-    pulseDuration: Math.random() * 4 + 2,
-  }));
-}
+// Precomputed static stars with deterministic positions so there is 0 hydration mismatch and 0 CPU loop
+const STATIC_STARS = [
+  { top: "6%", left: "12%", size: 1.5, dur: "3.2s", delay: "0s" },
+  { top: "9%", left: "46%", size: 2, dur: "4.1s", delay: "0.5s" },
+  { top: "13%", left: "78%", size: 1.2, dur: "2.8s", delay: "1.2s" },
+  { top: "16%", left: "28%", size: 2.2, dur: "5.0s", delay: "0.8s" },
+  { top: "19%", left: "92%", size: 1.2, dur: "3.5s", delay: "2.1s" },
+  { top: "25%", left: "62%", size: 1.8, dur: "4.4s", delay: "1.5s" },
+  { top: "30%", left: "15%", size: 2.2, dur: "3.9s", delay: "0.3s" },
+  { top: "34%", left: "84%", size: 1.5, dur: "4.7s", delay: "1.8s" },
+  { top: "39%", left: "38%", size: 1.2, dur: "3.1s", delay: "2.4s" },
+  { top: "43%", left: "6%", size: 2, dur: "5.2s", delay: "0.7s" },
+  { top: "48%", left: "72%", size: 1.6, dur: "3.6s", delay: "1.1s" },
+  { top: "54%", left: "22%", size: 1.8, dur: "4.2s", delay: "2.0s" },
+  { top: "59%", left: "95%", size: 1.4, dur: "3.8s", delay: "0.4s" },
+  { top: "65%", left: "48%", size: 2.2, dur: "4.9s", delay: "1.6s" },
+  { top: "70%", left: "80%", size: 1.2, dur: "3.3s", delay: "2.2s" },
+  { top: "75%", left: "18%", size: 2, dur: "4.5s", delay: "0.9s" },
+  { top: "80%", left: "65%", size: 1.5, dur: "3.7s", delay: "1.3s" },
+  { top: "86%", left: "32%", size: 2.4, dur: "5.1s", delay: "0.2s" },
+  { top: "90%", left: "88%", size: 1.3, dur: "4.0s", delay: "1.9s" },
+  { top: "95%", left: "55%", size: 1.7, dur: "3.4s", delay: "2.5s" },
+];
 
-function generateShootingStars(): ShootingStar[] {
-  return Array.from({ length: 12 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 60,
-    delay: Math.random() * 18,
-    duration: Math.random() * 2.5 + 1.5,
-  }));
-}
+const SHOOTING_STARS = [
+  { top: "12%", left: "80%", dur: "3.8s", delay: "1.5s" },
+  { top: "28%", left: "92%", dur: "4.2s", delay: "4.5s" },
+  { top: "48%", left: "85%", dur: "4.5s", delay: "7.5s" },
+];
 
-function generateParticles(): Particle[] {
-  return Array.from({ length: 28 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 3 + 2,
-    opacity: Math.random() * 0.35 + 0.1,
-    floatY: Math.random() * 30 + 10,
-    floatDuration: Math.random() * 8 + 5,
-  }));
-}
+const PARTICLES = [
+  { top: "22%", left: "12%", size: 3, dur: "6s", delay: "0s" },
+  { top: "42%", left: "86%", size: 4, dur: "8s", delay: "2s" },
+  { top: "66%", left: "26%", size: 3.5, dur: "7s", delay: "1s" },
+  { top: "82%", left: "72%", size: 3, dur: "9s", delay: "3s" },
+];
 
-/* ─── Component ─────────────────────────────────────────────────────── */
 function BackgroundFXContent() {
-  const [staticStars] = useState(generateStaticStars);
-  const [shootingStars] = useState(generateShootingStars);
-  const [particles] = useState(generateParticles);
-
   return (
-    <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-
+    <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none" aria-hidden="true">
       {/* ── Layer 1 · Light-mode soft gradient mesh ──────────────────── */}
       <div className="absolute inset-0 block dark:hidden">
         {/* Base gradient */}
         <div className="absolute inset-0 bg-linear-to-br from-slate-50 via-emerald-50/40 to-cyan-50/30" />
 
         {/* Drifting colour orbs */}
-        <motion.div
-          className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full"
+        <div
+          className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full animate-orb-slow blur-3xl opacity-60"
           style={{
             background:
               "radial-gradient(circle, rgba(52,211,153,0.18) 0%, rgba(6,182,212,0.10) 50%, transparent 80%)",
-            filter: "blur(60px)",
+            willChange: "transform",
           }}
-          animate={{ x: [0, 60, -30, 0], y: [0, 40, -20, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div
-          className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full"
+        <div
+          className="absolute top-1/3 -right-40 w-[450px] h-[450px] rounded-full animate-orb-reverse blur-3xl opacity-50"
           style={{
             background:
               "radial-gradient(circle, rgba(6,182,212,0.15) 0%, rgba(52,211,153,0.08) 50%, transparent 80%)",
-            filter: "blur(55px)",
+            willChange: "transform",
           }}
-          animate={{ x: [0, -50, 30, 0], y: [0, -30, 50, 0] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div
-          className="absolute -bottom-40 left-1/3 w-[450px] h-[450px] rounded-full"
+        <div
+          className="absolute -bottom-40 left-1/3 w-[400px] h-[400px] rounded-full animate-orb-slow blur-3xl opacity-50"
           style={{
             background:
               "radial-gradient(circle, rgba(167,243,208,0.20) 0%, rgba(103,232,249,0.10) 50%, transparent 80%)",
-            filter: "blur(50px)",
+            willChange: "transform",
           }}
-          animate={{ x: [0, 40, -60, 0], y: [0, -50, 30, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Subtle dot-grid overlay */}
+        {/* Subtle dot-grid */}
         <div
           className="absolute inset-0 opacity-[0.035]"
           style={{
-            backgroundImage: `radial-gradient(circle, #0f766e 1px, transparent 1px)`,
+            backgroundImage: "radial-gradient(circle, #0f766e 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
         />
 
         {/* Light floating particles */}
-        {particles.map((p) => (
-          <motion.div
-            key={`lp-${p.id}`}
-            className="absolute rounded-full bg-emerald-400"
+        {PARTICLES.map((p, i) => (
+          <div
+            key={`lp-${i}`}
+            className="absolute rounded-full bg-emerald-400 animate-float-slow"
             style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
+              left: p.left,
+              top: p.top,
               width: `${p.size}px`,
               height: `${p.size}px`,
-              opacity: p.opacity * 0.6,
-            }}
-            animate={{ y: [-p.floatY / 2, p.floatY / 2, -p.floatY / 2] }}
-            transition={{
-              duration: p.floatDuration,
-              repeat: Infinity,
-              ease: "easeInOut",
+              opacity: 0.35,
+              animationDuration: p.dur,
+              animationDelay: p.delay,
+              willChange: "transform",
             }}
           />
         ))}
@@ -149,138 +109,102 @@ function BackgroundFXContent() {
         <div className="absolute inset-0 bg-linear-to-b from-[#0b0416] via-[#0d0620] to-[#0b0416]" />
 
         {/* Aurora glow – top */}
-        <motion.div
-          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[120vw] h-[380px] rounded-full"
+        <div
+          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[120vw] h-[380px] rounded-full blur-3xl opacity-70 animate-pulse-slow"
           style={{
             background:
-              "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(52,211,153,0.12) 0%, rgba(6,182,212,0.08) 40%, transparent 75%)",
-            filter: "blur(30px)",
+              "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(52,211,153,0.15) 0%, rgba(6,182,212,0.1) 40%, transparent 75%)",
           }}
-          animate={{ opacity: [0.6, 1, 0.6], scaleX: [1, 1.08, 1] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Aurora glow – mid-left */}
-        <motion.div
-          className="absolute top-1/3 -left-40 w-[500px] h-[400px] rounded-full"
+        {/* Aurora glow orbs */}
+        <div
+          className="absolute top-1/3 -left-40 w-[450px] h-[350px] rounded-full blur-3xl opacity-60 animate-orb-slow"
           style={{
             background:
-              "radial-gradient(circle, rgba(52,211,153,0.09) 0%, rgba(6,182,212,0.06) 50%, transparent 80%)",
-            filter: "blur(70px)",
+              "radial-gradient(circle, rgba(52,211,153,0.10) 0%, rgba(6,182,212,0.06) 50%, transparent 80%)",
+            willChange: "transform",
           }}
-          animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
         />
-
-        {/* Aurora glow – mid-right */}
-        <motion.div
-          className="absolute bottom-1/3 -right-40 w-[450px] h-[350px] rounded-full"
+        <div
+          className="absolute bottom-1/3 -right-40 w-[400px] h-[320px] rounded-full blur-3xl opacity-60 animate-orb-reverse"
           style={{
             background:
-              "radial-gradient(circle, rgba(6,182,212,0.09) 0%, rgba(139,92,246,0.06) 50%, transparent 80%)",
-            filter: "blur(70px)",
+              "radial-gradient(circle, rgba(6,182,212,0.10) 0%, rgba(139,92,246,0.07) 50%, transparent 80%)",
+            willChange: "transform",
           }}
-          animate={{ x: [0, -40, 0], y: [0, 30, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
         />
 
         {/* Subtle star-grid */}
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{
-            backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)`,
+            backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
             backgroundSize: "50px 50px",
           }}
         />
 
-        {/* Static twinkling stars */}
-        {staticStars.map((star) => (
-          <motion.div
-            key={`s-${star.id}`}
-            className="absolute bg-white rounded-full"
+        {/* Static twinkling stars (pure CSS, compositor accelerated) */}
+        {STATIC_STARS.map((star, i) => (
+          <div
+            key={`s-${i}`}
+            className="absolute bg-white rounded-full animate-twinkle"
             style={{
-              top: `${star.y}%`,
-              left: `${star.x}%`,
+              top: star.top,
+              left: star.left,
               width: `${star.size}px`,
               height: `${star.size}px`,
-              boxShadow: `0 0 ${star.size * 4}px rgba(255,255,255,0.7)`,
-            }}
-            animate={{
-              opacity: [star.opacity * 0.3, star.opacity, star.opacity * 0.3],
-              scale: [1, 1.3, 1],
-            }}
-            transition={{
-              duration: star.pulseDuration,
-              repeat: Infinity,
-              ease: "easeInOut",
+              boxShadow: `0 0 ${star.size * 3}px rgba(255,255,255,0.8)`,
+              animationDuration: star.dur,
+              animationDelay: star.delay,
+              willChange: "opacity, transform",
             }}
           />
         ))}
 
         {/* Shooting stars */}
-        {shootingStars.map((star) => (
+        {SHOOTING_STARS.map((star, i) => (
           <div
-            key={`sh-${star.id}`}
-            className="absolute"
+            key={`sh-${i}`}
+            className="absolute rotate-[-42deg] animate-shooting"
             style={{
-              top: `${star.y}%`,
-              left: `${star.x}%`,
-              transform: "rotate(-42deg)",
+              top: star.top,
+              left: star.left,
+              animationDuration: star.dur,
+              animationDelay: star.delay,
+              willChange: "transform, opacity",
             }}
           >
-            <motion.div
-              className="h-[2px] w-[160px]"
+            <div
+              className="h-[2px] w-[140px]"
               style={{
                 background:
                   "linear-gradient(to right, transparent, rgba(255,255,255,0.9), rgba(52,211,153,0.8), transparent)",
-                boxShadow: "0 0 8px rgba(255,255,255,0.8)",
-              }}
-              initial={{ x: 0, opacity: 0 }}
-              animate={{ x: [0, -1800], opacity: [0, 1, 1, 0] }}
-              transition={{
-                x: {
-                  duration: star.duration,
-                  delay: star.delay,
-                  repeat: Infinity,
-                  ease: "linear",
-                },
-                opacity: {
-                  duration: star.duration,
-                  delay: star.delay,
-                  repeat: Infinity,
-                  ease: "linear",
-                  times: [0, 0.05, 0.15, 1],
-                },
+                boxShadow: "0 0 6px rgba(255,255,255,0.8)",
               }}
             />
           </div>
         ))}
 
         {/* Dark-mode floating particles */}
-        {particles.map((p) => (
-          <motion.div
-            key={`dp-${p.id}`}
-            className="absolute rounded-full"
+        {PARTICLES.map((p, i) => (
+          <div
+            key={`dp-${i}`}
+            className="absolute rounded-full animate-float-slow"
             style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
+              left: p.left,
+              top: p.top,
               width: `${p.size}px`,
               height: `${p.size}px`,
-              opacity: p.opacity,
-              background: `rgba(${p.id % 2 === 0 ? "52,211,153" : "6,182,212"},1)`,
+              background: i % 2 === 0 ? "rgba(52,211,153,0.7)" : "rgba(6,182,212,0.7)",
               boxShadow: `0 0 ${p.size * 3}px rgba(52,211,153,0.5)`,
-            }}
-            animate={{ y: [-p.floatY / 2, p.floatY / 2] }}
-            transition={{
-              duration: p.floatDuration,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut",
+              animationDuration: p.dur,
+              animationDelay: p.delay,
+              willChange: "transform",
             }}
           />
         ))}
       </div>
-
     </div>
   );
 }

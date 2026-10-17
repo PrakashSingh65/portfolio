@@ -340,6 +340,7 @@ export function GlobalChatWidget() {
                 >
                   <Input
                     placeholder="Type a message..."
+                    aria-label="Type your message to AI assistant"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     className="flex-1 rounded-full bg-secondary text-foreground border-input focus-visible:ring-1 focus-visible:ring-ring focus-visible:border-input pl-4 py-6 shadow-xs transition-all hover:bg-secondary/80 text-sm placeholder:text-muted-foreground"
@@ -353,8 +354,9 @@ export function GlobalChatWidget() {
                         variant="ghost"
                         className="h-9 w-9 rounded-full text-destructive hover:bg-destructive/10"
                         onClick={cancelStream}
+                        aria-label="Stop generating response"
                       >
-                        <Square className="h-4 w-4" />
+                        <Square className="h-4 w-4" aria-hidden="true" />
                         <span className="sr-only">Stop generating</span>
                       </Button>
                     )}
@@ -363,9 +365,11 @@ export function GlobalChatWidget() {
                       size="icon"
                       className={`h-9 w-9 cursor-pointer shrink-0 rounded-full shadow-md transition-all duration-300 ${message.trim() ? "bg-primary text-primary-foreground hover:bg-primary/90 scale-100" : "bg-muted text-muted-foreground scale-90 opacity-70"}`}
                       disabled={!message.trim()}
+                      aria-label="Send message"
                     >
                       <Send
                         className={`h-4 w-4 ${message.trim() ? "ml-0.5" : ""}`}
+                        aria-hidden="true"
                       />
                       <span className="sr-only">Send</span>
                     </Button>
@@ -378,7 +382,9 @@ export function GlobalChatWidget() {
       </AnimatePresence>
 
       <motion.button
+        type="button"
         onClick={toggleChat}
+        aria-label={isOpen ? "Close AI chat assistant" : "Open AI chat assistant"}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className={`h-14 w-14 rounded-full shadow-2xl hover:shadow-primary/40 transition-all duration-300 bg-black dark:bg-secondary text-white z-50 flex items-center justify-center cursor-pointer ring-2 ring-white/10 ${isOpen ? "hidden sm:flex" : "flex"}`}

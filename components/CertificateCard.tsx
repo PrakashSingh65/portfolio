@@ -18,23 +18,27 @@ export default function CertificateCard({
   return (
     <motion.div
       layoutId={layoutId}
-      onClick={onClick}
-      className={onClick ? "cursor-pointer" : ""}
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.4 }}
       whileHover={{ scale: 1.02 }}
+      className="h-full"
     >
-      <div className="relative aspect-[4/3] w-full bg-zinc-100 dark:bg-zinc-900">
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label="View certificate image full screen"
+        className="relative aspect-[4/3] w-full bg-zinc-100 dark:bg-zinc-900 rounded-xl overflow-hidden cursor-pointer border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 block text-left"
+      >
         <Image
           src={imageUrl}
-          alt="Certificate"
+          alt="Certificate credentials"
           fill
-          className="object-contain "
+          className="object-contain"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-      </div>
+      </button>
     </motion.div>
   );
 }

@@ -5,16 +5,29 @@ import { ArrowLeft } from "lucide-react";
 import { ConnectDB } from "@/lib/db";
 import Project, { IProject } from "@/models/project.model";
 import { Separator } from "@/components/ui/separator";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "All Projects",
+  description: "Browse the full portfolio of applications, developer tools, and projects built by Prakash Singh.",
+};
+
+export const revalidate = 60;
 
 async function fetchProjects(): Promise<IProject[]> {
-  await ConnectDB();
-  const projects = await Project.find()
-    .sort({ priority: 1, createdAt: -1 })
-    .lean<IProject[]>();
-  return projects.map((project) => ({
-    ...project,
-    _id: project._id?.toString(),
-  }));
+  try {
+    await ConnectDB();
+    const projects = await Project.find()
+      .sort({ priority: 1, createdAt: -1 })
+      .lean<IProject[]>();
+    return projects.map((project) => ({
+      ...project,
+      _id: project._id?.toString(),
+    }));
+  } catch (error) {
+    console.error("Error fetching all projects:", error);
+    return [];
+  }
 }
 
 export default async function AllProjectsPage() {
@@ -26,9 +39,10 @@ export default async function AllProjectsPage() {
       <div>
         <Link
           href="/projects"
-          className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-medium"
+          aria-label="Back to Featured Projects"
+          className="inline-flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-medium min-h-[44px]"
         >
-          <ArrowLeft size={16} /> Back to Featured
+          <ArrowLeft size={16} aria-hidden="true" /> Back to Featured
         </Link>
       </div>
 
@@ -37,7 +51,7 @@ export default async function AllProjectsPage() {
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">
           All Projects
         </h1>
-        <p className="text-zinc-600 dark:text-zinc-400 font-medium max-w-lg text-sm md:text-base">
+        <p className="text-zinc-700 dark:text-zinc-300 font-medium max-w-lg text-sm md:text-base">
           Explore my complete collection of projects, applications, and experiments across various tech stacks.
         </p>
       </div>

@@ -17,19 +17,31 @@ export default function AdminPanelLayout({ children }: { children: React.ReactNo
     }
 
     // If user is unauthenticated and trying to access any admin panel route, redirect to login
-    if (session.status === "unauthenticated" && pathname.startsWith("/admin-panel/intro")) {
+    if (session.status === "unauthenticated" && pathname !== "/admin-panel/login") {
       router.push("/admin-panel/login");
     }
   }, [session.status, pathname, router]);
 
-
   if (pathname === "/admin-panel/login") {
     return <>{children}</>;
   }
+
+  if (session.status === "loading") {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background text-muted-foreground">
+        Loading admin console...
+      </div>
+    );
+  }
+
+  if (session.status === "unauthenticated") {
+    return null;
+  }
+
   return (
     <SidebarProvider>
-    <AdminSideBar/>
+      <AdminSideBar />
       {children}
     </SidebarProvider>
-  )
+  );
 }

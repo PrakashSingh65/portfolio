@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
 import { formatExternalUrl } from "@/lib/utils";
+import { requireAuth } from "@/lib/apiAuth";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -36,6 +37,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { errorResponse } = await requireAuth();
+    if (errorResponse) return errorResponse;
+
     const { id } = await params;
     await ConnectDB();
     
@@ -115,6 +119,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { errorResponse } = await requireAuth();
+    if (errorResponse) return errorResponse;
+
     const { id } = await params;
     await ConnectDB();
     

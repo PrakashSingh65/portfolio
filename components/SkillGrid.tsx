@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { ISkill } from "../models/skill.model";
 
 export default function SkillGrid({ skills }: { skills: ISkill[] }) {
-  // Group & sort logic (same solid foundation)
   const grouped = skills.reduce(
     (acc, s) => {
       const cat = (s.skillCategory || "Other").toLowerCase();
@@ -38,7 +37,7 @@ export default function SkillGrid({ skills }: { skills: ISkill[] }) {
   });
 
   return (
-    <section id="skills" className=" ">
+    <div id="skills-list" className="w-full">
       {/* Category Sections */}
       {categories.map((category, catIndex) => {
         const categorySkills = skills.filter(
@@ -55,9 +54,10 @@ export default function SkillGrid({ skills }: { skills: ISkill[] }) {
             transition={{ duration: 0.5, delay: catIndex * 0.1 }}
             className="mb-8"
           >
-            <h2 className="md:text-xl text-lg font-bold text-zinc-800 dark:text-white mb-6 capitalize flex items-center gap-2">
+            <h3 className="md:text-xl text-lg font-bold text-zinc-800 dark:text-white mb-6 capitalize flex items-center gap-2">
               {category}
-            </h2>
+            </h3>
+
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {categorySkills.map((skill) => (
                 <div
@@ -67,28 +67,29 @@ export default function SkillGrid({ skills }: { skills: ISkill[] }) {
                       bg-white dark:bg-zinc-900/50 border-dashed
                       hover:border-blue-500/50 dark:hover:border-blue-500/50
                       hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all duration-300
-                      shadow-sm hover:shadow-lg cursor-pointer group hover:scale-105"
+                      shadow-sm hover:shadow-lg group hover:scale-105"
                 >
                   {/* Skill Icon */}
-                  <div className="relative w-8 h-8 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="relative w-8 h-8 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg group-hover:scale-110 transition-transform duration-300 shrink-0">
                     <Image
                       src={skill.image}
-                      alt={skill.skillName}
+                      alt={`${skill.skillName} logo`}
                       fill
+                      sizes="32px"
                       className="object-contain p-1"
                     />
                   </div>
 
                   {/* Skill Name */}
-                  <h2 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
+                  <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
                     {skill.skillName}
-                  </h2>
+                  </span>
                 </div>
               ))}
             </div>
           </motion.div>
         );
       })}
-    </section>
+    </div>
   );
 }

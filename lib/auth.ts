@@ -1,6 +1,7 @@
-import {NextAuthOptions, DefaultSession} from "next-auth";
+import { NextAuthOptions, DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import {ConnectDB} from "./db";
+import bcrypt from "bcryptjs";
+import { ConnectDB } from "./db";
 import User from "@/models/user.model";
 
 declare module "next-auth" {
@@ -12,45 +13,56 @@ declare module "next-auth" {
     }
 }
 
-
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                username: {label: "username", type: "text"},
-                password: {label: "password", type: "password"}
+                username: { label: "username", type: "text" },
+                password: { label: "password", type: "password" },
             },
 
             async authorize(credentials) {
-                if (!credentials?.username || !credentials.password) {
-                    throw new Error("Please enter a username and password");
+                if (!credentials?.username || !credentials?.password) {
+                    throw new Error("Please enter both username and password");
                 }
 
                 try {
                     await ConnectDB();
-                    const auth = await User.findOne({username: credentials.username});
+                    const auth = await User.findOne({ username: credentials.username });
 
                     if (!auth) {
-                        throw new Error("User not found");
+                        throw new Error("Invalid username or password");
                     }
 
-                    const isPasswordCorrect = auth.password === credentials.password;
+                    // 1. Verify using bcrypt
+                    let isPasswordCorrect = await bcrypt.compare(
+                        credentials.password,
+                        auth.password
+                    );
+
+                    // 2. Seamless Migration: If password was stored in plain text,
+                    // verify and auto-hash it in the database immediately
+                    if (!isPasswordCorrect && auth.password === credentials.password) {
+                        isPasswordCorrect = true;
+                        auth.password = await bcrypt.hash(credentials.password, 12);
+                        await auth.save();
+                    }
 
                     if (!isPasswordCorrect) {
-                        throw new Error("Incorrect password");
+                        throw new Error("Invalid username or password");
                     }
 
                     return {
                         id: auth._id.toString(),
-                        username: auth.username
-                    }
+                        username: auth.username,
+                    };
                 } catch (error) {
                     console.error("Auth error:", error);
                     throw error;
                 }
-            }
-        })
+            },
+        }),
     ],
 
     callbacks: {
