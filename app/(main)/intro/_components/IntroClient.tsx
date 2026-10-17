@@ -49,25 +49,36 @@ interface IntroClientProps {
   } | null;
 }
 
+// Transform Cloudinary URL for sub-50ms direct edge delivery with automatic format & compression
+function optimizeImageUrl(url?: string): string {
+  if (!url) return "/hero-profile.png";
+  if (url.includes("res.cloudinary.com") && url.includes("/upload/")) {
+    return url.replace("/upload/", "/upload/f_auto,q_auto,w_600/");
+  }
+  return url;
+}
+
 export default function IntroClient({ data }: IntroClientProps) {
   const name = data?.name || "Prakash Singh";
   const description =
     data?.description ||
     "Hi, I'm Prakash Singh — a Full Stack Developer passionate about building fast, accessible, and beautiful web applications.";
   const techStack = data?.techStack && data.techStack.length > 0 ? data.techStack : defaultTechStack;
-  const imageUrl = data?.image || "/hero-profile.png";
+  const rawImageUrl = data?.image || "/hero-profile.png";
+  const imageUrl = optimizeImageUrl(rawImageUrl);
   const resumeUrl = data?.file || "#";
+  const isRemote = imageUrl.startsWith("http");
 
   return (
     <div className="flex min-h-screen flex-col items-center w-full">
-      {/* Hero Section */}
+      {/* Hero Section - fully visible immediately in SSR HTML for sub-0.5s FCP and LCP */}
       <section
         id="hero"
         aria-label="Introduction and Hero"
         className="w-full min-h-screen flex items-center justify-center px-6 pt-24 pb-16 overflow-hidden"
       >
         <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-12 items-center">
-          {/* ── Left Column (Instantly visible on SSR for ultra-fast FCP / LCP) ── */}
+          {/* ── Left Column ── */}
           <div className="flex flex-col items-start">
             {/* Status Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-400 text-sm font-medium mb-8 border border-emerald-200 dark:border-emerald-400/20">
@@ -200,6 +211,7 @@ export default function IntroClient({ data }: IntroClientProps) {
                     className="w-full h-full object-cover"
                     priority
                     fetchPriority="high"
+                    unoptimized={isRemote}
                   />
                 </div>
 

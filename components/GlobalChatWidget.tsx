@@ -30,8 +30,14 @@ function getSessionSnapshot(): string {
   return id;
 }
 
-export function GlobalChatWidget() {
-  const [isOpen, setIsOpen] = React.useState(false);
+export function GlobalChatWidget({
+  initialOpen = false,
+  onClose,
+}: {
+  initialOpen?: boolean;
+  onClose?: () => void;
+} = {}) {
+  const [isOpen, setIsOpen] = React.useState(initialOpen);
   const [message, setMessage] = React.useState("");
   const [chatHistory, setChatHistory] = React.useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = React.useState(false);
@@ -50,7 +56,13 @@ export function GlobalChatWidget() {
     }
   }, [chatHistory, isStreaming]);
 
-  const toggleChat = () => setIsOpen((prev) => !prev);
+  const toggleChat = () => {
+    setIsOpen((prev) => {
+      const next = !prev;
+      if (!next && onClose) onClose();
+      return next;
+    });
+  };
 
   // ─── Cancel any in-flight stream ──────────────────────────────────────
   const cancelStream = React.useCallback(() => {

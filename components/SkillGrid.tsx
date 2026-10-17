@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { ISkill } from "../models/skill.model";
 
 export default function SkillGrid({ skills }: { skills: ISkill[] }) {
@@ -39,21 +38,14 @@ export default function SkillGrid({ skills }: { skills: ISkill[] }) {
   return (
     <div id="skills-list" className="w-full">
       {/* Category Sections */}
-      {categories.map((category, catIndex) => {
+      {categories.map((category) => {
         const categorySkills = skills.filter(
           (skill) => skill.skillCategory === category
         );
         if (categorySkills.length === 0) return null;
 
         return (
-          <motion.div
-            key={category}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: catIndex * 0.1 }}
-            className="mb-8"
-          >
+          <div key={category} className="mb-8">
             <h3 className="md:text-xl text-lg font-bold text-zinc-800 dark:text-white mb-6 capitalize flex items-center gap-2">
               {category}
             </h3>
@@ -87,7 +79,7 @@ export default function SkillGrid({ skills }: { skills: ISkill[] }) {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         );
       })}
     </div>

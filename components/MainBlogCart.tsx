@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 
 interface MainBlogCardProps {
   _id: string;
@@ -21,21 +20,14 @@ const MainBlogCard: React.FC<MainBlogCardProps> = ({
   tags,
 }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ y: -5 }}
-      className="h-full"
-    >
+    <div className="h-full">
       <article
         className="
           group relative flex flex-col overflow-hidden rounded-2xl 
           border border-zinc-200 dark:border-[#1e2939]
           bg-white dark:bg-[#171717] 
           shadow-md hover:shadow-xl dark:shadow-none
-          transition-all duration-300
+          transition-all duration-300 hover:-translate-y-1
           h-full
         "
       >
@@ -113,7 +105,7 @@ const MainBlogCard: React.FC<MainBlogCardProps> = ({
           </div>
         </CardContent>
       </article>
-    </motion.div>
+    </div>
   );
 };
 

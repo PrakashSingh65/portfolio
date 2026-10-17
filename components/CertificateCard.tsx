@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 
 interface CertificateCardProps {
@@ -13,18 +12,9 @@ interface CertificateCardProps {
 export default function CertificateCard({
   imageUrl,
   onClick,
-  layoutId,
 }: CertificateCardProps) {
   return (
-    <motion.div
-      layoutId={layoutId}
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4 }}
-      whileHover={{ scale: 1.02 }}
-      className="h-full"
-    >
+    <div className="h-full transition-transform duration-300 hover:scale-[1.02]">
       <button
         type="button"
         onClick={onClick}
@@ -39,6 +29,6 @@ export default function CertificateCard({
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </button>
-    </motion.div>
+    </div>
   );
 }
