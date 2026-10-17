@@ -1,8 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-
-const emptySubscribe = () => () => {};
+import { useState, useEffect } from "react";
 
 // Precomputed static stars with deterministic positions so there is 0 hydration mismatch and 0 CPU loop
 const STATIC_STARS = [
@@ -51,26 +49,26 @@ function BackgroundFXContent() {
 
         {/* Drifting colour orbs */}
         <div
-          className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full animate-orb-slow blur-3xl opacity-60"
+          className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full animate-orb-slow opacity-60"
           style={{
             background:
-              "radial-gradient(circle, rgba(52,211,153,0.18) 0%, rgba(6,182,212,0.10) 50%, transparent 80%)",
+              "radial-gradient(circle at center, rgba(52,211,153,0.18) 0%, rgba(6,182,212,0.10) 45%, transparent 70%)",
             willChange: "transform",
           }}
         />
         <div
-          className="absolute top-1/3 -right-40 w-[450px] h-[450px] rounded-full animate-orb-reverse blur-3xl opacity-50"
+          className="absolute top-1/3 -right-40 w-[450px] h-[450px] rounded-full animate-orb-reverse opacity-50"
           style={{
             background:
-              "radial-gradient(circle, rgba(6,182,212,0.15) 0%, rgba(52,211,153,0.08) 50%, transparent 80%)",
+              "radial-gradient(circle at center, rgba(6,182,212,0.15) 0%, rgba(52,211,153,0.08) 45%, transparent 70%)",
             willChange: "transform",
           }}
         />
         <div
-          className="absolute -bottom-40 left-1/3 w-[400px] h-[400px] rounded-full animate-orb-slow blur-3xl opacity-50"
+          className="absolute -bottom-40 left-1/3 w-[400px] h-[400px] rounded-full animate-orb-slow opacity-50"
           style={{
             background:
-              "radial-gradient(circle, rgba(167,243,208,0.20) 0%, rgba(103,232,249,0.10) 50%, transparent 80%)",
+              "radial-gradient(circle at center, rgba(167,243,208,0.20) 0%, rgba(103,232,249,0.10) 45%, transparent 70%)",
             willChange: "transform",
           }}
         />
@@ -110,7 +108,7 @@ function BackgroundFXContent() {
 
         {/* Aurora glow – top */}
         <div
-          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[120vw] h-[380px] rounded-full blur-3xl opacity-70 animate-pulse-slow"
+          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[120vw] h-[380px] rounded-full opacity-70 animate-pulse-slow"
           style={{
             background:
               "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(52,211,153,0.15) 0%, rgba(6,182,212,0.1) 40%, transparent 75%)",
@@ -119,18 +117,18 @@ function BackgroundFXContent() {
 
         {/* Aurora glow orbs */}
         <div
-          className="absolute top-1/3 -left-40 w-[450px] h-[350px] rounded-full blur-3xl opacity-60 animate-orb-slow"
+          className="absolute top-1/3 -left-40 w-[450px] h-[350px] rounded-full opacity-60 animate-orb-slow"
           style={{
             background:
-              "radial-gradient(circle, rgba(52,211,153,0.10) 0%, rgba(6,182,212,0.06) 50%, transparent 80%)",
+              "radial-gradient(circle at center, rgba(52,211,153,0.10) 0%, rgba(6,182,212,0.06) 50%, transparent 75%)",
             willChange: "transform",
           }}
         />
         <div
-          className="absolute bottom-1/3 -right-40 w-[400px] h-[320px] rounded-full blur-3xl opacity-60 animate-orb-reverse"
+          className="absolute bottom-1/3 -right-40 w-[400px] h-[320px] rounded-full opacity-60 animate-orb-reverse"
           style={{
             background:
-              "radial-gradient(circle, rgba(6,182,212,0.10) 0%, rgba(139,92,246,0.07) 50%, transparent 80%)",
+              "radial-gradient(circle at center, rgba(6,182,212,0.10) 0%, rgba(139,92,246,0.07) 50%, transparent 75%)",
             willChange: "transform",
           }}
         />
@@ -210,7 +208,16 @@ function BackgroundFXContent() {
 }
 
 export default function BackgroundFX() {
-  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(() => setMounted(true));
+    } else {
+      setTimeout(() => setMounted(true), 50);
+    }
+  }, []);
+
   if (!mounted) return null;
   return <BackgroundFXContent />;
 }

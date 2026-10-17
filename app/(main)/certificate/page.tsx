@@ -1,9 +1,5 @@
 import React from "react";
-import { ConnectDB } from "../../../lib/db";
-import Certificate, {
-  ICertificate,
-} from "../../../models/certificate.model";
-
+import { getCertificatesData } from "@/lib/data";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
@@ -25,24 +21,8 @@ const CertificateGallery = dynamic(
   }
 );
 
-async function fetchCertificates(): Promise<ICertificate[]> {
-  try {
-    await ConnectDB();
-    const certificates = await Certificate.find()
-      .sort({ priority: 1 })
-      .lean<ICertificate[]>();
-    return certificates.map((cert) => ({
-      ...cert,
-      _id: cert._id?.toString(),
-    }));
-  } catch (error) {
-    console.error("Error fetching certificates:", error);
-    return [];
-  }
-}
-
 export default async function CertificatePage() {
-  const certificates = await fetchCertificates();
+  const certificates = await getCertificatesData(3);
 
   return (
     <section id="certificates" aria-label="Certifications & Credentials" className="container mx-auto px-4 py-8">

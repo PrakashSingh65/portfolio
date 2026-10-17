@@ -1,6 +1,5 @@
 import React from "react";
-import { ConnectDB } from "../../../lib/db";
-import Blog, { IBlog } from "../../../models/blog.model";
+import { getBlogsData } from "@/lib/data";
 import MainBlogCard from "../../../components/MainBlogCart";
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
@@ -8,25 +7,8 @@ import { Button } from "@/components/ui/button";
 
 export const revalidate = 60;
 
-async function fetchBlogs(): Promise<IBlog[]> {
-  try {
-    await ConnectDB();
-    const blogs = await Blog.find()
-      .sort({ createdAt: -1 })
-      .limit(2)
-      .lean<IBlog[]>();
-    return blogs.map((blog) => ({
-      ...blog,
-      _id: blog._id?.toString(),
-    }));
-  } catch (error) {
-    console.error("Error fetching blogs:", error);
-    return [];
-  }
-}
-
 export default async function BlogPage() {
-  const blogs = await fetchBlogs();
+  const blogs = await getBlogsData(2);
 
   return (
     <section id="blog" aria-label="Featured Blog Articles" className="container mx-auto px-4 py-8">

@@ -1,6 +1,5 @@
 import React from "react";
-import { ConnectDB } from "../../../lib/db";
-import Skill, { ISkill } from "../../../models/skill.model";
+import { getSkillsData } from "@/lib/data";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,22 +16,8 @@ const SkillGrid = dynamic(() => import("@/components/SkillGrid"), {
   ),
 });
 
-async function fetchSkills(): Promise<ISkill[]> {
-  try {
-    await ConnectDB();
-    const skills = await Skill.find().sort({ priority: 1 }).lean<ISkill[]>();
-    return skills.map((skill) => ({
-      ...skill,
-      _id: skill._id?.toString(),
-    }));
-  } catch (error) {
-    console.error("Error fetching skills:", error);
-    return [];
-  }
-}
-
 export default async function SkillPage() {
-  const skills = await fetchSkills();
+  const skills = await getSkillsData();
 
   return (
     <TooltipProvider>

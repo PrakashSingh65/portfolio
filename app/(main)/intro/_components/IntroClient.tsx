@@ -3,26 +3,11 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, type Transition } from "framer-motion";
 import { ArrowRight, Code2, Sparkles } from "lucide-react";
-
-const ease = "easeOut" as const;
-
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease } as Transition,
-});
-
-const fadeLeft = (delay = 0) => ({
-  initial: { opacity: 0, x: 50 },
-  animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.7, delay, ease } as Transition,
-});
 
 const defaultTechStack = ["React", "Next.js", "TypeScript", "Node.js", "Tailwind", "MongoDB"];
 
-// Custom typewriter component for typing out tech stack list
+// Custom lightweight typewriter component
 function Typewriter({ words, speed = 150, delay = 2000 }: { words: string[], speed?: number, delay?: number }) {
   const [index, setIndex] = useState(0);
   const [subIndex, setSubIndex] = useState(0);
@@ -82,52 +67,40 @@ export default function IntroClient({ data }: IntroClientProps) {
         className="w-full min-h-screen flex items-center justify-center px-6 pt-24 pb-16 overflow-hidden"
       >
         <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-12 items-center">
-          {/* ── Left Column ── */}
+          {/* ── Left Column (Instantly visible on SSR for ultra-fast FCP / LCP) ── */}
           <div className="flex flex-col items-start">
             {/* Status Badge */}
-            <motion.div
-              {...fadeUp(0)}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-400 text-sm font-medium mb-8 border border-emerald-200 dark:border-emerald-400/20"
-            >
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-400 text-sm font-medium mb-8 border border-emerald-200 dark:border-emerald-400/20">
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 dark:bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 dark:bg-emerald-400" />
               </span>
               Available for Work
-            </motion.div>
+            </div>
 
             {/* Heading - Name */}
-            <motion.h1
-              {...fadeUp(0.1)}
-              className="text-5xl md:text-6xl font-bold tracking-tight mb-4 leading-tight text-slate-900 dark:text-white"
-            >
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-4 leading-tight text-slate-900 dark:text-white">
               Hi, I&apos;m{" "}
               <span className="bg-gradient-to-r from-emerald-500 to-cyan-500 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
                 {name}
               </span>
-            </motion.h1>
+            </h1>
 
             {/* Sub-heading - Tech Stack Typewriter */}
-            <motion.div
-              {...fadeUp(0.15)}
-              className="text-xl md:text-2xl font-semibold mb-6 text-slate-700 dark:text-white/80 min-h-[40px] flex items-center"
-            >
+            <div className="text-xl md:text-2xl font-semibold mb-6 text-slate-700 dark:text-white/80 min-h-[40px] flex items-center">
               <span>Specialized in&nbsp;</span>
               <span className="text-emerald-600 dark:text-emerald-400 font-bold border-r-2 border-emerald-500 dark:border-emerald-400 pr-1.5 animate-pulse">
                 <Typewriter words={techStack} />
               </span>
-            </motion.div>
+            </div>
 
             {/* Description */}
-            <motion.p
-              {...fadeUp(0.2)}
-              className="text-base md:text-lg text-slate-700 dark:text-zinc-300 mb-8 max-w-xl leading-relaxed whitespace-pre-wrap"
-            >
+            <p className="text-base md:text-lg text-slate-700 dark:text-zinc-300 mb-8 max-w-xl leading-relaxed whitespace-pre-wrap">
               {description}
-            </motion.p>
+            </p>
 
             {/* Tech Pills */}
-            <motion.div {...fadeUp(0.25)} className="flex flex-wrap gap-2 mb-9">
+            <div className="flex flex-wrap gap-2 mb-9">
               {techStack.map((tech) => (
                 <span
                   key={tech}
@@ -136,10 +109,10 @@ export default function IntroClient({ data }: IntroClientProps) {
                   {tech}
                 </span>
               ))}
-            </motion.div>
+            </div>
 
             {/* CTA Buttons */}
-            <motion.div {...fadeUp(0.3)} className="flex flex-wrap gap-4 mb-10">
+            <div className="flex flex-wrap gap-4 mb-10">
               <Link
                 href="/projects"
                 className="group inline-flex items-center gap-2 px-6 py-3.5 bg-emerald-600 dark:bg-emerald-400 text-white dark:text-[#0b0416] font-semibold rounded-full hover:bg-emerald-700 dark:hover:bg-emerald-300 transition-all duration-200 shadow-lg shadow-emerald-500/25 text-sm min-h-[44px]"
@@ -169,10 +142,10 @@ export default function IntroClient({ data }: IntroClientProps) {
               >
                 Get in Touch
               </Link>
-            </motion.div>
+            </div>
 
             {/* Social Links */}
-            <motion.div {...fadeUp(0.35)} className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
               {([
                 {
                   href: "https://github.com/PrakashSingh65",
@@ -201,23 +174,19 @@ export default function IntroClient({ data }: IntroClientProps) {
                   <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true"><path d={path} /></svg>
                 </a>
               ))}
-            </motion.div>
+            </div>
           </div>
 
-          {/* ── Right Column – Glowing Light Image ── */}
+          {/* ── Right Column – Hero Image Card ── */}
           <div className="flex flex-col items-center gap-8">
-            <motion.div {...fadeLeft(0.15)} className="relative w-full max-w-sm group">
+            <div className="relative w-full max-w-sm group">
               {/* Outer Halo */}
               <div
                 className="absolute -inset-1.5 rounded-[2rem] bg-gradient-to-r from-emerald-500 via-cyan-400 to-emerald-500 opacity-60 blur-xl group-hover:opacity-90 transition duration-700 -z-10"
                 aria-hidden="true"
               />
-              
-              {/* Decorative blobs */}
-              <div className="absolute -top-6 -left-6 w-40 h-40 rounded-full bg-emerald-400/20 blur-3xl" aria-hidden="true" />
-              <div className="absolute -bottom-6 -right-6 w-40 h-40 rounded-full bg-cyan-400/20 blur-3xl" aria-hidden="true" />
 
-              {/* Card border wrap with CSS shadow */}
+              {/* Card container */}
               <div
                 className="relative rounded-3xl overflow-hidden border border-emerald-400/30 dark:border-white/10 bg-slate-100 dark:bg-white/5 aspect-[480/520] p-1.5 bg-gradient-to-br from-emerald-500/20 via-transparent to-cyan-500/20 shadow-[0_0_30px_rgba(52,211,153,0.25)]"
               >
@@ -250,7 +219,7 @@ export default function IntroClient({ data }: IntroClientProps) {
                   <span className="text-xs font-semibold text-slate-800 dark:text-white">Open to Opportunities</span>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
