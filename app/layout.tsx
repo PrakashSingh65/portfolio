@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Preahvihear, Geist } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "../components/ThemeProvider";
@@ -11,13 +11,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
-  display: "swap",
-});
-
-const preahvihear = Preahvihear({
-  variable: "--font-preahvihear",
-  subsets: ["latin"],
-  weight: "400",
   display: "swap",
 });
 
@@ -123,13 +116,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body
-        className={`${preahvihear.variable} font-sans antialiased min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0b0416] dark:text-white transition-colors duration-300 relative z-0`}
+        className="font-sans antialiased min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0b0416] dark:text-white transition-colors duration-300 relative z-0"
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AosInit />

@@ -7,14 +7,24 @@ import { ArrowRight, Code2, Sparkles } from "lucide-react";
 
 const defaultTechStack = ["React", "Next.js", "TypeScript", "Node.js", "Tailwind", "MongoDB"];
 
-// Custom lightweight typewriter component
+// Custom lightweight typewriter component that starts with initial text pre-rendered
 function Typewriter({ words, speed = 150, delay = 2000 }: { words: string[], speed?: number, delay?: number }) {
   const [index, setIndex] = useState(0);
-  const [subIndex, setSubIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(words[0]?.length || 0);
   const [reverse, setReverse] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
-    if (words.length === 0) return;
+    // Delay animation until after initial page load and hydration is idle
+    const initialDelay = setTimeout(() => {
+      setReverse(true);
+      setHasStarted(true);
+    }, delay);
+    return () => clearTimeout(initialDelay);
+  }, [delay]);
+
+  useEffect(() => {
+    if (!hasStarted || words.length === 0) return;
 
     if (subIndex === words[index].length + 1 && !reverse) {
       const timeout = setTimeout(() => setReverse(true), delay);
@@ -34,7 +44,7 @@ function Typewriter({ words, speed = 150, delay = 2000 }: { words: string[], spe
     }, reverse ? 75 : speed);
 
     return () => clearTimeout(timeout);
-  }, [subIndex, index, reverse, words, speed, delay]);
+  }, [subIndex, index, reverse, words, speed, delay, hasStarted]);
 
   return <span>{words[index]?.substring(0, subIndex)}</span>;
 }
